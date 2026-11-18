@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23EE3502 Digital Circuits — Interactive Visual Academy</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-soft: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --sig-hi: #2563eb;
+      --sig-lo: #94a3b8;
+      --sig-ok: #059669;
+      --sig-warn: #d97706;
+    }
+    html.dark {
+      --bg-page: #0b1120;
+      --bg-card: #111827;
+      --bg-subtle: #1e293b;
+      --border-soft: #334155;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --sig-hi: #60a5fa;
+      --sig-lo: #475569;
+      --sig-ok: #34d399;
+      --sig-warn: #fbbf24;
+    }
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 1rem;
+    }
+    .subtle-box {
+      background-color: var(--bg-subtle);
+      border-radius: 0.75rem;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .tt-table th, .tt-table td {
+      padding: 0.45rem 0.65rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border-soft);
+      font-size: 0.82rem;
+    }
+    .tt-table th {
+      background-color: var(--bg-subtle);
+      font-weight: 600;
+    }
+    .tt-row-active {
+      background-color: rgba(37, 99, 235, 0.14) !important;
+      font-weight: 600;
+    }
+    html.dark .tt-row-active {
+      background-color: rgba(96, 165, 250, 0.2) !important;
+    }
+    .kmap-cell {
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .kmap-cell:hover {
+      transform: scale(1.04);
+    }
+    .wire-hi {
+      stroke: var(--sig-hi);
+      stroke-width: 2.4;
+      fill: none;
+      transition: stroke 0.18s ease, stroke-width 0.18s ease;
+    }
+    .wire-lo {
+      stroke: var(--sig-lo);
+      stroke-width: 1.4;
+      fill: none;
+      transition: stroke 0.18s ease;
+    }
+    .wire-ok {
+      stroke: var(--sig-ok);
+      stroke-width: 2.4;
+      fill: none;
+    }
+    .wire-ctrl {
+      stroke: var(--text-muted);
+      stroke-width: 1.2;
+      stroke-dasharray: 4 3;
+      fill: none;
+    }
+    .seg-on {
+      fill: #ef4444;
+      filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.7));
+      transition: fill 0.15s ease;
+    }
+    .seg-off {
+      fill: #334155;
+      opacity: 0.2;
+      transition: fill 0.15s ease;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+
+  <!-- Sticky Top Header -->
+  <header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-mono font-bold text-sm shrink-0 shadow-sm">
+          DC
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-sm sm:text-base font-bold truncate leading-tight">23EE3502 Digital Circuits</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Interactive Visual Lab · Units I–V (PVP23 Syllabus)</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <span id="unit-co-badge" class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+          CO1 · CO2 · CO3
+        </span>
+        <button id="theme-toggle" type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+          Dark Mode
+        </button>
+      </div>
+    </div>
+
+    <!-- Unit Navigation Tabs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-2.5 overflow-x-auto no-scrollbar">
+      <nav id="unit-nav" class="flex items-center gap-1.5 min-w-max" aria-label="Syllabus Units">
+        <button type="button" data-unit="u1" class="unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-blue-600 text-white shadow-sm">
+          Unit I: Comb. I
+        </button>
+        <button type="button" data-unit="u2" class="unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          Unit II: Comb. II
+        </button>
+        <button type="button" data-unit="u3" class="unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          Unit III: Sequential
+        </button>
+        <button type="button" data-unit="u4" class="unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          Unit IV: FSM Design
+        </button>
+        <button type="button" data-unit="u5" class="unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          Unit V: Digital ICs
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- ==================== UNIT I ==================== -->
+    <section id="unit-u1" class="unit-section space-y-6">
+      <div class="card p-5 sm:p-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Unit I · CO1, CO2, CO3</span>
+            <h2 class="text-xl sm:text-2xl font-bold mt-1">Combinational Logic Circuits – I</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl">
+              Boolean minimization, canonical forms, NAND/NOR realizations, 3/4/5-variable Karnaugh maps, Quine-McCluskey tabulation, and arithmetic circuits (CLA, 4-bit adder-subtractor, BCD adder, Excess-3 adder, binary comparators).
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-1.5" id="u1-subnav">
+            <button type="button" data-sub="u1-kmap" class="u1-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">K-Map &amp; Minimization</button>
+            <button type="button" data-sub="u1-arith" class="u1-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Arithmetic Circuits Lab</button>
+            <button type="button" data-sub="u1-theory" class="u1-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Boolean, Q-M &amp; NAND/NOR</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- U1 Sub 1: Interactive K-Map -->
+      <div id="u1-kmap" class="u1-pane grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-base font-bold">Interactive Karnaugh Map (3- &amp; 4-Variable)</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Tap any cell to cycle <span class="mono font-semibold">0 → 1 → X (Don't Care)</span></p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="kmap-v3" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800">3-Var</button>
+              <button type="button" id="kmap-v4" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white">4-Var</button>
+              <button type="button" id="kmap-clear" class="px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-300 dark:border-slate-700">Clear</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" class="kmap-preset px-2.5 py-1 rounded-md text-xs bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800" data-preset="exam1">Exam: Σm(0,1,2,4,5,6,8,9,12,13,14)</button>
+            <button type="button" class="kmap-preset px-2.5 py-1 rounded-md text-xs bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800" data-preset="dc">With Don't Cares Σm(1,3,7,11,15)+d(0,2,5)</button>
+            <button type="button" class="kmap-preset px-2.5 py-1 rounded-md text-xs bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800" data-preset="bcd">BCD Invalid Detector</button>
+          </div>
+
+          <div id="kmap-grid-wrap" class="overflow-x-auto py-2 flex justify-center"></div>
+
+          <div class="subtle-box p-4 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Minimized SOP Expression</span>
+              <span id="kmap-group-count" class="text-xs mono px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">0 Prime Implicants</span>
+            </div>
+            <div id="kmap-sop" class="mono text-base font-bold text-blue-600 dark:text-blue-400 break-words">F = 0</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-xs">
+              <div><span class="text-slate-500">Minterms:</span> <span id="kmap-minterms" class="mono font-medium">Σm()</span></div>
+              <div><span class="text-slate-500">Maxterms (POS):</span> <span id="kmap-maxterms" class="mono font-medium">ΠM()</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 card p-5 space-y-4">
+          <h3 class="text-base font-bold">Live Truth Table &amp; 5-Variable K-Map Rule</h3>
+          <div class="max-h-72 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700">
+            <table class="w-full tt-table mono">
+              <thead id="kmap-tt-head"></thead>
+              <tbody id="kmap-tt-body"></tbody>
+            </table>
+          </div>
+          <div class="subtle-box p-3.5 text-xs space-y-1.5 leading-relaxed">
+            <div class="font-semibold text-slate-800 dark:text-slate-200">5-Variable K-Map (A, B, C, D, E) Exam Tip</div>
+            <p class="text-slate-600 dark:text-slate-400">Split into two 4-variable maps: left map for <span class="mono font-semibold">A = 0</span> (minterms 0–15) and right map for <span class="mono font-semibold">A = 1</span> (minterms 16–31). Cells in the exact same row &amp; column of both maps are adjacent and drop variable <span class="mono font-semibold">A</span> when grouped.</p>
+            <p class="text-slate-600 dark:text-slate-400"><strong>Maxterm (POS) Simplification:</strong> Group the <span class="mono font-semibold">0</span>s (and useful <span class="mono font-semibold">X</span>s) instead of <span class="mono font-semibold">1</span>s, complement each variable (0 → uncomplemented, 1 → complemented), and OR within each group.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- U1 Sub 2: Arithmetic Circuits Lab -->
+      <div id="u1-arith" class="u1-pane hidden space-y-6">
+        <div class="card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold">Interactive 4-Bit Adder / Subtractor &amp; CLA Visualizer</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Toggle input bits <span class="mono">A₃..A₀</span>, <span class="mono">B₃..B₀</span>, and Mode <span class="mono">M</span> (0 = Add, 1 = 2's Complement Subtract)</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" id="arith-mode-add" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">M = 0 (A + B)</button>
+              <button type="button" id="arith-mode-sub" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">M = 1 (A − B)</button>
+            </div>
+          </div>
+
+          <!-- Interactive Bit Switches -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="subtle-box p-3.5">
+              <div class="flex justify-between text-xs mb-2">
+                <span class="font-semibold">Operand A (4-bit)</span>
+                <span id="arith-a-dec" class="mono font-bold text-blue-600 dark:text-blue-400">1010 (10)</span>
+              </div>
+              <div class="grid grid-cols-4 gap-1.5" id="arith-a-btns"></div>
+            </div>
+            <div class="subtle-box p-3.5">
+              <div class="flex justify-between text-xs mb-2">
+                <span class="font-semibold">Operand B (4-bit)</span>
+                <span id="arith-b-dec" class="mono font-bold text-blue-600 dark:text-blue-400">0011 (3)</span>
+              </div>
+              <div class="grid grid-cols-4 gap-1.5" id="arith-b-btns"></div>
+            </div>
+            <div class="subtle-box p-3.5 flex flex-col justify-between">
+              <div class="text-xs font-semibold text-slate-500">Live Result</div>
+              <div id="arith-res-main" class="mono text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">1101 (13)</div>
+              <div id="arith-flags" class="mono text-xs text-slate-600 dark:text-slate-400 mt-1">Cout = 0 · Overflow V = 0</div>
+            </div>
+          </div>
+
+          <!-- Interactive 4-Bit Adder-Subtractor SVG -->
+          <div class="overflow-x-auto">
+            <svg id="arith-svg" viewBox="0 0 840 270" class="w-full min-w-[660px] max-w-4xl mx-auto"></svg>
+          </div>
+
+          <!-- Carry Look-Ahead & BCD / Comparator / Excess-3 Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div class="subtle-box p-4 space-y-2">
+              <h4 class="text-sm font-bold">Carry Look-Ahead (CLA) Adder</h4>
+              <p class="text-xs text-slate-600 dark:text-slate-400">Eliminates ripple carry delay by computing all carries in parallel from Propagate (<span class="mono">Pᵢ = Aᵢ ⊕ Bᵢ</span>) and Generate (<span class="mono">Gᵢ = Aᵢ·Bᵢ</span>):</p>
+              <div id="cla-live-eq" class="mono text-xs bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 space-y-1"></div>
+            </div>
+            <div class="subtle-box p-4 space-y-2">
+              <h4 class="text-sm font-bold">BCD Adder &amp; Excess-3 Adder</h4>
+              <p class="text-xs text-slate-600 dark:text-slate-400"><strong>BCD Adder:</strong> Adds two 4-bit BCD digits. If binary sum &gt; 9, condition <span class="mono font-semibold">C = K + Z₈Z₄ + Z₈Z₂ = 1</span> adds correction <span class="mono font-semibold">+0110 (6)</span> via a second 4-bit adder.</p>
+              <div id="bcd-live-box" class="mono text-xs bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700"></div>
+              <p class="text-xs text-slate-600 dark:text-slate-400"><strong>Excess-3 Adder:</strong> Add 4-bit Excess-3 codes. If carry = 1, add <span class="mono">+0011</span>; if carry = 0, subtract <span class="mono">0011</span> (add <span class="mono">1101</span>).</p>
+            </div>
+            <div class="subtle-box p-4 space-y-2">
+              <h4 class="text-sm font-bold">4-Bit Binary Comparator (Live)</h4>
+              <p class="text-xs text-slate-600 dark:text-slate-400">Uses XNOR equality terms <span class="mono">xᵢ = Aᵢ ⊙ Bᵢ</span>:</p>
+              <div class="mono text-xs bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 space-y-1">
+                <div>(A = B) = x₃x₂x₁x₀</div>
+                <div>(A &gt; B) = A₃B₃' + x₃A₂B₂' + x₃x₂A₁B₁' + x₃x₂x₁A₀B₀'</div>
+                <div>(A &lt; B) = A₃'B₃ + x₃A₂'B₂ + x₃x₂A₁'B₁ + x₃x₂x₁A₀'B₀</div>
+              </div>
+              <div id="comp-live-badge" class="text-xs font-bold mono px-3 py-1.5 rounded-lg text-center bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- U1 Sub 3: Boolean Theorems, Quine-McCluskey & NAND/NOR -->
+      <div id="u1-theory" class="u1-pane hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card p-5 space-y-3">
+          <h3 class="text-base font-bold">Boolean Theorems &amp; Canonical Forms</h3>
+          <table class="w-full tt-table text-left">
+            <thead><tr><th>Law / Theorem</th><th>AND Form</th><th>OR Form</th></tr></thead>
+            <tbody class="mono">
+              <tr><td>De Morgan's</td><td>(A·B)' = A' + B'</td><td>(A + B)' = A'·B'</td></tr>
+              <tr><td>Distributive</td><td>A(B + C) = AB + AC</td><td>A + BC = (A+B)(A+C)</td></tr>
+              <tr><td>Absorption</td><td>A + AB = A</td><td>A(A + B) = A</td></tr>
+              <tr><td>Redundancy</td><td>A + A'B = A + B</td><td>A(A' + B) = AB</td></tr>
+              <tr><td>Consensus</td><td colspan="2">AB + A'C + BC = AB + A'C</td></tr>
+            </tbody>
+          </table>
+          <div class="subtle-box p-3.5 text-xs space-y-1">
+            <div><strong>NAND-NAND Realization:</strong> Directly implements 2-level <strong>SOP</strong> (<span class="mono">F = AB + CD</span>). Replace every AND and OR gate with a NAND gate.</div>
+            <div><strong>NOR-NOR Realization:</strong> Directly implements 2-level <strong>POS</strong> (<span class="mono">F = (A+B)(C+D)</span>). Replace every OR and AND gate with a NOR gate.</div>
+          </div>
+        </div>
+
+        <div class="card p-5 space-y-3">
+          <h3 class="text-base font-bold">Quine–McCluskey (Tabulation) Minimization</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400">Systematic tabular method ideal for <strong>5+ variables</strong> where K-maps become cumbersome:</p>
+          <ol class="text-xs space-y-2 list-decimal list-inside text-slate-700 dark:text-slate-300">
+            <li><strong>Group by 1s count:</strong> List all minterms (and don't cares) in binary, grouped by number of 1s (Index 0, 1, 2, 3...).</li>
+            <li><strong>Pair adjacent groups:</strong> Compare minterms in group <em>k</em> with group <em>k</em>+1. If they differ in exactly 1 bit, combine them with a dash (<span class="mono">-</span>) and check off both.</li>
+            <li><strong>Repeat until no merges:</strong> All unchecked terms are <strong>Prime Implicants (PIs)</strong>.</li>
+            <li><strong>PI Chart:</strong> Columns = required minterms (exclude don't cares), Rows = PIs. Identify columns with a single <span class="mono">×</span> to select <strong>Essential Prime Implicants (EPIs)</strong>, then cover remaining minterms with minimum PIs.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== UNIT II ==================== -->
+    <section id="unit-u2" class="unit-section hidden space-y-6">
+      <div class="card p-5 sm:p-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Unit II · CO1, CO2, CO3</span>
+            <h2 class="text-xl sm:text-2xl font-bold mt-1">Combinational Logic Circuits – II</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl">
+              Decoders, BCD &amp; 7-segment decoders, Multiplexers &amp; De-multiplexers, Boolean function realization, Encoders &amp; Priority Encoders, ROM/RAM, and Programmable Logic Devices (PROM, PAL, PLA).
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-sub="u2-mux" class="u2-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">MUX / De-MUX</button>
+            <button type="button" data-sub="u2-7seg" class="u2-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">7-Seg Decoder &amp; Encoder</button>
+            <button type="button" data-sub="u2-pld" class="u2-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">PROM, PAL &amp; PLA</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- U2 Sub 1: Interactive 4:1 MUX -->
+      <div id="u2-mux" class="u2-pane grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-base font-bold">Interactive 4×1 Multiplexer (Data Selector)</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Change select lines <span class="mono">S₁, S₀</span> and data inputs <span class="mono">I₀–I₃</span> to trace the active signal path</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="mux-s1" class="px-3 py-1 rounded-lg text-xs mono font-bold bg-slate-200 dark:bg-slate-700">S₁ = 0</button>
+              <button type="button" id="mux-s0" class="px-3 py-1 rounded-lg text-xs mono font-bold bg-slate-200 dark:bg-slate-700">S₀ = 0</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-slate-500">Data Inputs:</span>
+            <button type="button" data-idx="0" class="mux-in-btn px-2.5 py-1 rounded-md text-xs mono font-bold bg-blue-600 text-white">I₀ = 1</button>
+            <button type="button" data-idx="1" class="mux-in-btn px-2.5 py-1 rounded-md text-xs mono font-bold bg-slate-200 dark:bg-slate-700">I₁ = 0</button>
+            <button type="button" data-idx="2" class="mux-in-btn px-2.5 py-1 rounded-md text-xs mono font-bold bg-blue-600 text-white">I₂ = 1</button>
+            <button type="button" data-idx="3" class="mux-in-btn px-2.5 py-1 rounded-md text-xs mono font-bold bg-slate-200 dark:bg-slate-700">I₃ = 0</button>
+          </div>
+
+          <svg id="mux-svg" viewBox="0 0 660 250" class="w-full max-w-2xl mx-auto"></svg>
+
+          <div class="subtle-box p-3.5 text-xs space-y-1">
+            <div class="mono font-semibold text-blue-600 dark:text-blue-400">Y = S₁'S₀'I₀ + S₁'S₀I₁ + S₁S₀'I₂ + S₁S₀I₃</div>
+            <p class="text-slate-600 dark:text-slate-400"><strong>Boolean Realization Rule:</strong> An <em>n</em>-variable function can be implemented with a 2<sup>n−1</sup>×1 MUX by connecting (<em>n</em>−1) variables to select lines and tying each data input to <span class="mono">0, 1, D,</span> or <span class="mono">D'</span>.</p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 card p-5 space-y-4">
+          <h3 class="text-base font-bold">MUX Function Table &amp; De-MUX Contrast</h3>
+          <table class="w-full tt-table mono">
+            <thead><tr><th>S₁</th><th>S₀</th><th>Selected Channel</th><th>Output Y</th></tr></thead>
+            <tbody id="mux-tt-body">
+              <tr data-row="0"><td>0</td><td>0</td><td>I₀</td><td class="mux-y-cell">1</td></tr>
+              <tr data-row="1"><td>0</td><td>1</td><td>I₁</td><td class="mux-y-cell">0</td></tr>
+              <tr data-row="2"><td>1</td><td>0</td><td>I₂</td><td class="mux-y-cell">1</td></tr>
+              <tr data-row="3"><td>1</td><td>1</td><td>I₃</td><td class="mux-y-cell">0</td></tr>
+            </tbody>
+          </table>
+          <div class="subtle-box p-3.5 text-xs space-y-2 leading-relaxed">
+            <div><strong>De-Multiplexer (1-to-2ⁿ):</strong> Inverse of a MUX — routes 1 data input <span class="mono">D</span> to one of 2<sup>n</sup> outputs selected by <em>n</em> select lines. A Decoder with an Enable pin works identically as a De-MUX!</div>
+            <div><strong>Higher-Order Multiplexing:</strong> Build a 16×1 MUX using five 4×1 MUXes (four in stage 1 controlled by S₁, S₀ feeding one in stage 2 controlled by S₃, S₂).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- U2 Sub 2: 7-Segment BCD Decoder & Priority Encoder -->
+      <div id="u2-7seg" class="u2-pane hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-6 card p-5 space-y-4">
+          <h3 class="text-base font-bold">Interactive BCD to 7-Segment Decoder</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Select a BCD digit (0–9) to light up the 7-segment display (<span class="mono">a–g</span>) and inspect active segments.</p>
+          <div class="grid grid-cols-5 gap-1.5" id="bcd-digit-btns"></div>
+          <div class="flex flex-col sm:flex-row items-center justify-around gap-4 py-2">
+            <svg id="seg-svg" viewBox="0 0 140 220" class="w-36 h-52 bg-slate-950 rounded-2xl p-3 border border-slate-700"></svg>
+            <div class="space-y-2 text-xs">
+              <div class="subtle-box p-3">
+                <div class="text-slate-500">BCD Input (D C B A)</div>
+                <div id="seg-bcd-bits" class="mono text-lg font-bold text-blue-600 dark:text-blue-400">0 0 0 0</div>
+              </div>
+              <div class="subtle-box p-3">
+                <div class="text-slate-500">Active Segments (a b c d e f g)</div>
+                <div id="seg-bits" class="mono text-sm font-bold text-emerald-600 dark:text-emerald-400">1 1 1 1 1 1 0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 card p-5 space-y-4">
+          <h3 class="text-base font-bold">Interactive 4-to-2 Priority Encoder</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Toggle multiple inputs simultaneously: highest index (<span class="mono">D₃ &gt; D₂ &gt; D₁ &gt; D₀</span>) always wins!</p>
+          <div class="grid grid-cols-4 gap-2" id="penc-btns"></div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="subtle-box p-3"><div class="text-xs text-slate-500">Output X</div><div id="penc-x" class="mono text-xl font-bold">0</div></div>
+            <div class="subtle-box p-3"><div class="text-xs text-slate-500">Output Y</div><div id="penc-y" class="mono text-xl font-bold">0</div></div>
+            <div class="subtle-box p-3"><div class="text-xs text-slate-500">Valid V</div><div id="penc-v" class="mono text-xl font-bold text-emerald-600 dark:text-emerald-400">0</div></div>
+          </div>
+          <table class="w-full tt-table mono">
+            <thead><tr><th>D₃</th><th>D₂</th><th>D₁</th><th>D₀</th><th>X</th><th>Y</th><th>V</th></tr></thead>
+            <tbody id="penc-tt">
+              <tr data-p="none"><td>0</td><td>0</td><td>0</td><td>0</td><td>×</td><td>×</td><td>0</td></tr>
+              <tr data-p="0"><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+              <tr data-p="1"><td>0</td><td>0</td><td>1</td><td>×</td><td>0</td><td>1</td><td>1</td></tr>
+              <tr data-p="2"><td>0</td><td>1</td><td>×</td><td>×</td><td>1</td><td>0</td><td>1</td></tr>
+              <tr data-p="3"><td>1</td><td>×</td><td>×</td><td>×</td><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <div class="mono text-xs subtle-box p-3">X = D₂ + D₃ &nbsp;|&nbsp; Y = D₃ + D₁D₂' &nbsp;|&nbsp; V = D₀ + D₁ + D₂ + D₃</div>
+        </div>
+      </div>
+
+      <!-- U2 Sub 3: PROM, PAL, PLA -->
+      <div id="u2-pld" class="u2-pane hidden space-y-6">
+        <div class="card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-bold">Programmable Logic Devices: PROM vs PAL vs PLA</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Switch device architecture to compare Fixed vs. Programmable AND/OR arrays</p>
+            </div>
+            <div class="flex gap-1.5">
+              <button type="button" data-pld="prom" class="pld-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">PROM</button>
+              <button type="button" data-pld="pal" class="pld-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">PAL</button>
+              <button type="button" data-pld="pla" class="pld-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">PLA</button>
+            </div>
+          </div>
+
+          <svg id="pld-svg" viewBox="0 0 740 170" class="w-full max-w-3xl mx-auto"></svg>
+
+          <div id="pld-desc" class="subtle-box p-4 text-xs sm:text-sm leading-relaxed"></div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full tt-table">
+              <thead><tr><th>Device</th><th>AND Array</th><th>OR Array</th><th>Product Term Sharing</th><th>Best Use Case</th></tr></thead>
+              <tbody>
+                <tr><td class="font-bold">PROM</td><td>Fixed (Decoder)</td><td class="text-blue-600 dark:text-blue-400 font-semibold">Programmable</td><td>All 2<sup>n</sup> minterms generated</td><td>Lookup tables, code converters</td></tr>
+                <tr><td class="font-bold">PAL</td><td class="text-blue-600 dark:text-blue-400 font-semibold">Programmable</td><td>Fixed</td><td>No (dedicated OR per output)</td><td>Fast, low-cost glue logic</td></tr>
+                <tr><td class="font-bold">PLA</td><td class="text-blue-600 dark:text-blue-400 font-semibold">Programmable</td><td class="text-blue-600 dark:text-blue-400 font-semibold">Programmable</td><td>Yes (shared across outputs)</td><td>Complex multi-output SOP functions</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== UNIT III ==================== -->
+    <section id="unit-u3" class="unit-section hidden space-y-6">
+      <div class="card p-5 sm:p-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Unit III · CO1, CO4, CO5</span>
+            <h2 class="text-xl sm:text-2xl font-bold mt-1">Sequential Logic Circuits</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl">
+              Flip-flops (SR, JK, D, T, Master-Slave, edge-triggered, excitation tables &amp; conversions), Counters (Async, Sync, Mod-N, Ring, Johnson), and Registers (Buffer, Shift, Bidirectional, 4-Bit Universal Shift Register).
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-sub="u3-usr" class="u3-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">Universal Shift Register</button>
+            <button type="button" data-sub="u3-ff" class="u3-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Flip-Flops &amp; Excitation</button>
+            <button type="button" data-sub="u3-cnt" class="u3-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Counters &amp; Waveforms</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- U3 Sub 1: Interactive 4-Bit Universal Shift Register -->
+      <div id="u3-usr" class="u3-pane card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base font-bold">Live 4-Bit Universal Shift Register Simulator (IC 74194 Architecture)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Choose mode <span class="mono">(S₁, S₀)</span>, set <span class="mono">SIR / SIL / I₃–I₀</span>, and hit <strong>Pulse CLK ↑</strong> to watch bits move through the D Flip-Flops!</p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" id="usr-clk-btn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Pulse CLK ↑</button>
+            <button type="button" id="usr-clr-btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">CLR (0000)</button>
+          </div>
+        </div>
+
+        <!-- Mode Selector + Data Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 subtle-box p-3">
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-umode="00" class="usr-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">00 Hold</button>
+            <button type="button" data-umode="01" class="usr-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">01 Shift Right</button>
+            <button type="button" data-umode="10" class="usr-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">10 Shift Left</button>
+            <button type="button" data-umode="11" class="usr-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">11 Parallel Load</button>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 text-xs mono">
+            <button type="button" id="usr-sir-btn" class="px-2.5 py-1 rounded-md font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">SIR=1</button>
+            <button type="button" id="usr-sil-btn" class="px-2.5 py-1 rounded-md font-bold bg-slate-200 dark:bg-slate-700">SIL=0</button>
+            <span class="text-slate-400">|</span>
+            <button type="button" data-pi="3" class="usr-pi-btn px-2 py-1 rounded-md font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">I₃=1</button>
+            <button type="button" data-pi="2" class="usr-pi-btn px-2 py-1 rounded-md font-bold bg-slate-200 dark:bg-slate-700">I₂=0</button>
+            <button type="button" data-pi="1" class="usr-pi-btn px-2 py-1 rounded-md font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">I₁=1</button>
+            <button type="button" data-pi="0" class="usr-pi-btn px-2 py-1 rounded-md font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">I₀=1</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <svg id="usr-svg" viewBox="0 0 880 420" class="w-full min-w-[680px] max-w-4xl mx-auto"></svg>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="subtle-box p-4 space-y-1.5">
+            <div id="usr-mode-title" class="text-sm font-bold text-blue-600 dark:text-blue-400">Mode 00 — Hold (No Change)</div>
+            <div id="usr-mode-eq" class="mono text-xs font-semibold">A₃⁺ = A₃, A₂⁺ = A₂, A₁⁺ = A₁, A₀⁺ = A₀</div>
+            <p id="usr-mode-desc" class="text-xs text-slate-600 dark:text-slate-400"></p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full tt-table mono">
+              <thead><tr><th>S₁</th><th>S₀</th><th>Operation</th><th>MUX Pin</th></tr></thead>
+              <tbody id="usr-tt">
+                <tr data-um="00" class="tt-row-active"><td>0</td><td>0</td><td>Hold (No Change)</td><td>0</td></tr>
+                <tr data-um="01"><td>0</td><td>1</td><td>Shift Right (SIR→A₃)</td><td>1</td></tr>
+                <tr data-um="10"><td>1</td><td>0</td><td>Shift Left (SIL→A₀)</td><td>2</td></tr>
+                <tr data-um="11"><td>1</td><td>1</td><td>Parallel Load (I→A)</td><td>3</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- U3 Sub 2: Flip-Flops Simulator & Excitation Tables -->
+      <div id="u3-ff" class="u3-pane hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-6 card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base font-bold">Interactive Edge-Triggered Flip-Flop Lab</h3>
+            <div class="flex gap-1">
+              <button type="button" data-ff="JK" class="ff-type-btn px-2.5 py-1 rounded-md text-xs font-bold bg-blue-600 text-white">JK</button>
+              <button type="button" data-ff="SR" class="ff-type-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800">SR</button>
+              <button type="button" data-ff="D" class="ff-type-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800">D</button>
+              <button type="button" data-ff="T" class="ff-type-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800">T</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div id="ff-input-btns" class="flex gap-2"></div>
+            <button type="button" id="ff-clk" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white">Pulse CLK ↑</button>
+            <button type="button" id="ff-clr" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-700">CLR (Q=0)</button>
+          </div>
+
+          <svg id="ff-svg" viewBox="0 0 460 190" class="w-full max-w-md mx-auto"></svg>
+
+          <div class="subtle-box p-3.5 text-xs space-y-1">
+            <div><strong>Characteristic Equation:</strong> <span id="ff-char-eq" class="mono font-bold text-blue-600 dark:text-blue-400"></span></div>
+            <div id="ff-status" class="text-slate-600 dark:text-slate-400"></div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 card p-5 space-y-4">
+          <h3 class="text-base font-bold">Excitation Table &amp; Master-Slave / Timing Notes</h3>
+          <table class="w-full tt-table mono">
+            <thead><tr><th>Qₙ</th><th>Qₙ₊₁</th><th>S R</th><th>J K</th><th>D</th><th>T</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0 ×</td><td>0 ×</td><td>0</td><td>0</td></tr>
+              <tr><td>0</td><td>1</td><td>1 0</td><td>1 ×</td><td>1</td><td>1</td></tr>
+              <tr><td>1</td><td>0</td><td>0 1</td><td>× 1</td><td>0</td><td>1</td></tr>
+              <tr><td>1</td><td>1</td><td>× 0</td><td>× 0</td><td>1</td><td>0</td></tr>
+            </tbody>
+          </table>
+          <div class="subtle-box p-3.5 text-xs space-y-1.5 leading-relaxed">
+            <div><strong>Race-Around Condition (JK Latch):</strong> When <span class="mono">J=K=1</span> and clock pulse width <span class="mono">t_p &gt; t_pd</span>, output toggles uncontrollably. Solved by <strong>Master-Slave JK Flip-Flop</strong> (master samples on HIGH, slave updates on LOW) or <strong>Edge-Triggered</strong> flip-flops.</div>
+            <div><strong>Timing Parameters:</strong> Setup time (<span class="mono">t_su</span>: data stable before clock edge), Hold time (<span class="mono">t_h</span>: data stable after clock edge), Propagation delay (<span class="mono">t_pd</span>: clock edge to valid Q).</div>
+            <div><strong>Flip-Flop Conversion Procedure:</strong> Write desired FF truth table → map Q<sub>n</sub> → Q<sub>n+1</sub> using target FF excitation table → K-map simplify target inputs.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- U3 Sub 3: Counters & Waveforms -->
+      <div id="u3-cnt" class="u3-pane hidden card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base font-bold">Interactive Counter &amp; Live Timing Waveform Simulator</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Step through clock cycles to compare Synchronous, Mod-10, Ring, and Johnson counter sequences</p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-cnt="sync" class="cnt-mode-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">4-Bit Sync (Mod-16)</button>
+            <button type="button" data-cnt="mod10" class="cnt-mode-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Mod-10 (Decade)</button>
+            <button type="button" data-cnt="ring" class="cnt-mode-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">4-Bit Ring (4 States)</button>
+            <button type="button" data-cnt="johnson" class="cnt-mode-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">4-Bit Johnson (8 States)</button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="cnt-step" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white">Pulse CLK ↑</button>
+          <button type="button" id="cnt-auto" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">Auto-Clock</button>
+          <button type="button" id="cnt-reset" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-700">Reset</button>
+          <span id="cnt-state-readout" class="ml-auto mono text-sm font-bold text-blue-600 dark:text-blue-400">State: 0000 (0) · Cycle 0</span>
+        </div>
+
+        <!-- 4 Flip-Flop State LEDs -->
+        <div class="grid grid-cols-4 gap-3 max-w-lg mx-auto" id="cnt-leds"></div>
+
+        <!-- Live Timing Waveform SVG -->
+        <div class="overflow-x-auto subtle-box p-3">
+          <svg id="cnt-wave-svg" viewBox="0 0 760 200" class="w-full min-w-[580px] max-w-4xl mx-auto"></svg>
+        </div>
+        <div id="cnt-note" class="text-xs text-slate-600 dark:text-slate-400"></div>
+      </div>
+    </section>
+
+    <!-- ==================== UNIT IV ==================== -->
+    <section id="unit-u4" class="unit-section hidden space-y-6">
+      <div class="card p-5 sm:p-6">
+        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Unit IV · CO1, CO4, CO5</span>
+        <h2 class="text-xl sm:text-2xl font-bold mt-1">Sequential Circuit Design (Mealy &amp; Moore FSMs)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl">
+          Mealy and Moore state machine models, state diagram construction, analysis of clocked sequential circuits, overlapping sequence detector realization (<span class="mono font-semibold">1011</span>), state reduction, and state assignment.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 card p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-base font-bold">Interactive `1011` Overlapping Sequence Detector</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Feed bits 0 or 1 and watch state transitions and output <span class="mono">Z</span> live</p>
+            </div>
+            <div class="flex gap-1.5">
+              <button type="button" id="fsm-mealy-btn" class="px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white">Mealy (4 States)</button>
+              <button type="button" id="fsm-moore-btn" class="px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Moore (5 States)</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="fsm-feed-0" class="px-4 py-1.5 rounded-lg text-xs mono font-bold bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600">Feed X = 0</button>
+            <button type="button" id="fsm-feed-1" class="px-4 py-1.5 rounded-lg text-xs mono font-bold bg-blue-600 hover:bg-blue-700 text-white">Feed X = 1</button>
+            <button type="button" id="fsm-demo" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">Run "1011011"</button>
+            <button type="button" id="fsm-reset" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700">Reset</button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <svg id="fsm-svg" viewBox="0 0 720 220" class="w-full min-w-[540px] max-w-3xl mx-auto"></svg>
+          </div>
+
+          <div class="subtle-box p-3.5 space-y-1.5 mono text-xs">
+            <div><span class="text-slate-500">Input Stream X:</span> <span id="fsm-hist-x" class="font-bold tracking-widest">—</span></div>
+            <div><span class="text-slate-500">State Trace:</span> <span id="fsm-hist-s" class="font-semibold text-blue-600 dark:text-blue-400">S0</span></div>
+            <div><span class="text-slate-500">Output Z:</span> <span id="fsm-hist-z" class="font-bold tracking-widest text-emerald-600 dark:text-emerald-400">—</span></div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 card p-5 space-y-4">
+          <h3 class="text-base font-bold">State Table &amp; Mealy vs. Moore</h3>
+          <table class="w-full tt-table mono">
+            <thead><tr><th>Present</th><th>Next (X=0)</th><th>Next (X=1)</th><th>Output Z</th></tr></thead>
+            <tbody id="fsm-tt-body"></tbody>
+          </table>
+
+          <table class="w-full tt-table text-left">
+            <thead><tr><th>Feature</th><th>Mealy Machine</th><th>Moore Machine</th></tr></thead>
+            <tbody>
+              <tr><td class="font-semibold">Output depends on</td><td>Present state + Input</td><td>Present state only</td></tr>
+              <tr><td class="font-semibold">States needed</td><td>Fewer (4 for 1011)</td><td>More (5 for 1011)</td></tr>
+              <tr><td class="font-semibold">Output timing</td><td>Immediate (async glitches)</td><td>Synchronous (1 clk delay)</td></tr>
+            </tbody>
+          </table>
+
+          <div class="subtle-box p-3 text-xs space-y-1">
+            <strong>State Reduction &amp; Design Procedure:</strong>
+            <p class="text-slate-600 dark:text-slate-400">1. Draw state diagram → 2. Build state table → 3. Merge equivalent states (same next state &amp; output for all inputs) → 4. Binary state assignment (⌈log₂ N⌉ FFs) → 5. Derive FF input equations via excitation table + K-maps → 6. Draw logic diagram.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== UNIT V ==================== -->
+    <section id="unit-u5" class="unit-section hidden space-y-6">
+      <div class="card p-5 sm:p-6">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Unit V · CO1, CO4, CO5</span>
+            <h2 class="text-xl sm:text-2xl font-bold mt-1">Digital Integrated Circuits &amp; Logic Families</h2>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-3xl">
+              Logic levels, propagation delay, power dissipation, fan-out &amp; fan-in, noise margin, and logic families: RTL, DTL, TTL, ECL, MOS, CMOS, and CMOS Transmission Gate circuits.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-sub="u5-nm" class="u5-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">Noise Margin &amp; Specs</button>
+            <button type="button" data-sub="u5-gates" class="u5-sub-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">CMOS / TTL / TG Simulator</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- U5 Sub 1: Noise Margin Visualizer & Master Table -->
+      <div id="u5-nm" class="u5-pane space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-6 card p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="text-base font-bold">Interactive Voltage Levels &amp; Noise Margin</h3>
+              <div class="flex gap-1.5">
+                <button type="button" data-fam="TTL" class="nm-fam-btn px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white">TTL (5V)</button>
+                <button type="button" data-fam="CMOS" class="nm-fam-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">CMOS (5V)</button>
+                <button type="button" data-fam="ECL" class="nm-fam-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">ECL (-5.2V)</button>
+              </div>
+            </div>
+            <svg id="nm-svg" viewBox="0 0 520 260" class="w-full max-w-lg mx-auto"></svg>
+            <div id="nm-summary" class="subtle-box p-3.5 text-xs mono space-y-1"></div>
+          </div>
+
+          <div class="lg:col-span-6 card p-5 space-y-3">
+            <h3 class="text-base font-bold">Key IC Performance Parameters</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="subtle-box p-3 space-y-1">
+                <div class="font-bold text-blue-600 dark:text-blue-400">Propagation Delay (t_pd)</div>
+                <div class="mono">t_pd = (t_PHL + t_PLH) / 2</div>
+                <p class="text-slate-600 dark:text-slate-400">Average transition time from 50% input change to 50% output response (ns).</p>
+              </div>
+              <div class="subtle-box p-3 space-y-1">
+                <div class="font-bold text-emerald-600 dark:text-emerald-400">Figure of Merit (SPP)</div>
+                <div class="mono">FOM = t_pd × P_D (pJ)</div>
+                <p class="text-slate-600 dark:text-slate-400">Speed-Power Product; lower pJ means better efficiency.</p>
+              </div>
+              <div class="subtle-box p-3 space-y-1">
+                <div class="font-bold text-amber-600 dark:text-amber-400">Fan-Out &amp; Fan-In</div>
+                <div class="mono">Fan-Out = min(I_OH/I_IH, I_OL/I_IL)</div>
+                <p class="text-slate-600 dark:text-slate-400">Max standard loads driven by output (Fan-Out) vs max inputs on gate (Fan-In).</p>
+              </div>
+              <div class="subtle-box p-3 space-y-1">
+                <div class="font-bold text-purple-600 dark:text-purple-400">Noise Margins</div>
+                <div class="mono">NM_H = V_OH − V_IH<br/>NM_L = V_IL − V_OL</div>
+                <p class="text-slate-600 dark:text-slate-400">Maximum tolerable noise voltage before logic error occurs.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5 overflow-x-auto">
+          <h3 class="text-base font-bold mb-3">Logic Families Master Comparison Table</h3>
+          <table class="w-full tt-table">
+            <thead><tr><th>Family</th><th>Basic Gate</th><th>Fan-Out</th><th>Power / Gate</th><th>t_pd (ns)</th><th>Noise Margin</th><th>Key Characteristics</th></tr></thead>
+            <tbody>
+              <tr><td class="font-bold">RTL</td><td>NOR</td><td>5</td><td>12 mW</td><td>12</td><td>Low (0.2 V)</td><td>Resistor-Transistor; obsolete, poor noise immunity</td></tr>
+              <tr><td class="font-bold">DTL</td><td>NAND</td><td>8</td><td>10 mW</td><td>30</td><td>Moderate (0.7 V)</td><td>Diode-Transistor; improved over RTL</td></tr>
+              <tr><td class="font-bold">TTL (Std)</td><td>NAND</td><td>10</td><td>10 mW</td><td>10</td><td>0.4 V</td><td>Multi-emitter input + Totem-Pole output; rugged</td></tr>
+              <tr><td class="font-bold">ECL</td><td>OR / NOR</td><td>25</td><td>40–55 mW</td><td>1–2</td><td>0.25 V</td><td>Non-saturated BJT diff-amp; fastest family, high power</td></tr>
+              <tr><td class="font-bold">CMOS</td><td>NAND / NOR</td><td>&gt;50</td><td>~0.01 mW (static)</td><td>10–25</td><td>~1.45 V (High)</td><td>Complementary PMOS+NMOS; ultra-low static power</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- U5 Sub 2: Interactive CMOS Inverter, NAND & Transmission Gate -->
+      <div id="u5-gates" class="u5-pane hidden card p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base font-bold">Interactive Transistor-Level Gate Visualizer</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Toggle inputs to watch PMOS / NMOS / Transmission Gate switches turn <strong>ON</strong> or <strong>OFF</strong></p>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" data-g="cmos-inv" class="u5-gate-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white">CMOS Inverter</button>
+            <button type="button" data-g="cmos-nand" class="u5-gate-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">2-In CMOS NAND</button>
+            <button type="button" data-g="cmos-tg" class="u5-gate-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">CMOS Transmission Gate</button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2" id="u5-gate-inputs"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-7">
+            <svg id="u5-gate-svg" viewBox="0 0 540 280" class="w-full max-w-xl mx-auto"></svg>
+          </div>
+          <div class="lg:col-span-5 space-y-3">
+            <div id="u5-gate-status" class="subtle-box p-4 text-xs space-y-2 leading-relaxed"></div>
+            <div class="subtle-box p-4 text-xs space-y-1.5">
+              <div class="font-bold">Why CMOS Dominates Modern VLSI</div>
+              <p class="text-slate-600 dark:text-slate-400">In steady state (input 0 or 1), either the pull-up PMOS network or pull-down NMOS network is OFF — so there is <strong>no direct DC current path</strong> from V<sub>DD</sub> to GND (near-zero static power dissipation).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Textbooks -->
+    <footer class="card p-4 text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
+      <div><strong>Textbooks:</strong> Zvi Kohavi (<em>Switching &amp; Finite Automata Theory</em>, 3rd ed.) · M. Morris Mano &amp; M. D. Ciletti (<em>Digital Design</em>, 4th ed.)</div>
+      <div>23EE3502 Digital Circuits · Interactive Visual Lab</div>
+    </footer>
+  </main>
+
+  <script>
+    /* ==================== THEME & NAVIGATION ==================== */
+    const htmlEl = document.documentElement;
+    const themeBtn = document.getElementById('theme-toggle');
+    function applyTheme(dark) {
+      htmlEl.classList.toggle('dark', dark);
+      themeBtn.textContent = dark ? 'Light Mode' : 'Dark Mode';
+      try { localStorage.setItem('dc_theme', dark ? 'dark' : 'light'); } catch (_) {}
+    }
+    try {
+      if (localStorage.getItem('dc_theme') === 'dark') applyTheme(true);
+    } catch (_) {}
+    themeBtn.addEventListener('click', () => applyTheme(!htmlEl.classList.contains('dark')));
+
+    const UNIT_CO = {
+      u1: 'CO1 · CO2 · CO3',
+      u2: 'CO1 · CO2 · CO3',
+      u3: 'CO1 · CO4 · CO5',
+      u4: 'CO1 · CO4 · CO5',
+      u5: 'CO1 · CO4 · CO5',
+    };
+    document.querySelectorAll('.unit-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const u = btn.dataset.unit;
+        document.querySelectorAll('.unit-tab').forEach(b => {
+          const active = b.dataset.unit === u;
+          b.className = active
+            ? 'unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition bg-blue-600 text-white shadow-sm'
+            : 'unit-tab px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
+        });
+        document.querySelectorAll('.unit-section').forEach(sec => {
+          sec.classList.toggle('hidden', sec.id !== 'unit-' + u);
+        });
+        document.getElementById('unit-co-badge').textContent = UNIT_CO[u] || '';
+      });
+    });
+
+    function wireSubTabs(btnClass, paneClass) {
+      document.querySelectorAll('.' + btnClass).forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.dataset.sub;
+          document.querySelectorAll('.' + btnClass).forEach(b => {
+            const on = b.dataset.sub === target;
+            b.className = on
+              ? btnClass + ' px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+              : btnClass + ' px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+          });
+          document.querySelectorAll('.' + paneClass).forEach(p => {
+            p.classList.toggle('hidden', p.id !== target);
+          });
+        });
+      });
+    }
+    wireSubTabs('u1-sub-btn', 'u1-pane');
+    wireSubTabs('u2-sub-btn', 'u2-pane');
+    wireSubTabs('u3-sub-btn', 'u3-pane');
+    wireSubTabs('u5-sub-btn', 'u5-pane');
+
+    /* ==================== UNIT I: K-MAP SOLVER ==================== */
+    let kmapVars = 4;
+    let kmapVals = new Array(16).fill(0);
+    // Default exam preset: Σm(0,1,2,4,5,6,8,9,12,13,14)
+    [0,1,2,4,5,6,8,9,12,13,14].forEach(i => { kmapVals[i] = 1; });
+
+    const GRAY2 = [0, 1, 3, 2];
+    const GRAY2_LBL = ['00', '01', '11', '10'];
+
+    function solveQuineMcCluskey(vars, vals) {
+      const ones = [];
+      const allAllowed = [];
+      const n = 1 << vars;
+      for (let i = 0; i < n; i++) {
+        if (vals[i] === 1) { ones.push(i); allAllowed.push(i); }
+        else if (vals[i] === 2) { allAllowed.push(i); }
+      }
+      if (ones.length === 0) return { expr: '0', pis: [] };
+      if (allAllowed.length === n) return { expr: '1', pis: [{ bits: '-'.repeat(vars), cells: allAllowed }] };
+
+      let current = allAllowed.map(m => ({ bits: m.toString(2).padStart(vars, '0'), cells: [m], used: false }));
+      const primes = [];
+      while (current.length > 0) {
+        const nextMap = new Map();
+        for (let i = 0; i < current.length; i++) {
+          for (let j = i + 1; j < current.length; j++) {
+            let diff = 0, pos = -1;
+            for (let k = 0; k < vars; k++) {
+              if (current[i].bits[k] !== current[j].bits[k]) { diff++; pos = k; }
+            }
+            if (diff === 1) {
+              current[i].used = true;
+              current[j].used = true;
+              const nb = current[i].bits.slice(0, pos) + '-' + current[i].bits.slice(pos + 1);
+              if (!nextMap.has(nb)) {
+                const merged = Array.from(new Set([...current[i].cells, ...current[j].cells])).sort((a,b) => a - b);
+                nextMap.set(nb, { bits: nb, cells: merged, used: false });
+              }
+            }
+          }
+        }
+        current.forEach(item => {
+          if (!item.used && !primes.some(p => p.bits === item.bits)) primes.push(item);
+        });
+        current = Array.from(nextMap.values());
+      }
+
+      // Greedy essential PI + covering
+      const uncovered = new Set(ones);
+      const selected = [];
+      let changed = true;
+      while (changed && uncovered.size > 0) {
+        changed = false;
+        for (const m of Array.from(uncovered)) {
+          const covering = primes.filter(p => p.cells.includes(m));
+          if (covering.length === 1) {
+            const epi = covering[0];
+            if (!selected.includes(epi)) {
+              selected.push(epi);
+              epi.cells.forEach(c => uncovered.delete(c));
+              changed = true;
+            }
+          }
+        }
+      }
+      while (uncovered.size > 0) {
+        let best = null, bestCov = 0;
+        for (const p of primes) {
+          if (selected.includes(p)) continue;
+          const cov = p.cells.filter(c => uncovered.has(c)).length;
+          if (cov > bestCov) { bestCov = cov; best = p; }
+        }
+        if (!best) break;
+        selected.push(best);
+        best.cells.forEach(c => uncovered.delete(c));
+      }
+
+      const varNames = vars === 3 ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D'];
+      const terms = selected.map(p => {
+        let t = '';
+        for (let k = 0; k < vars; k++) {
+          if (p.bits[k] === '1') t += varNames[k];
+          else if (p.bits[k] === '0') t += varNames[k] + "'";
+        }
+        return t || '1';
+      });
+      return { expr: terms.join(' + '), pis: selected };
+    }
+
+    function renderKMap() {
+      const wrap = document.getElementById('kmap-grid-wrap');
+      const rows = kmapVars === 3 ? [0, 1] : GRAY2;
+      const rowLabels = kmapVars === 3 ? ['0', '1'] : GRAY2_LBL;
+      const cols = GRAY2;
+      const colLabels = GRAY2_LBL;
+      const cornerLabel = kmapVars === 3 ? 'A \\ BC' : 'AB \\ CD';
+      const { expr, pis } = solveQuineMcCluskey(kmapVars, kmapVals);
+
+      const groupColors = ['ring-blue-500', 'ring-emerald-500', 'ring-amber-500', 'ring-purple-500', 'ring-rose-500'];
+      const cellGroupMap = new Map();
+      pis.forEach((p, idx) => {
+        p.cells.forEach(c => { if (!cellGroupMap.has(c)) cellGroupMap.set(c, idx); });
+      });
+
+      let html = `<table class="border-collapse mono text-sm"><thead><tr>
+        <th class="px-3 py-2 text-xs text-slate-500">${cornerLabel}</th>`;
+      colLabels.forEach(cl => { html += `<th class="px-3 py-2 text-xs font-bold text-slate-600 dark:text-slate-300">${cl}</th>`; });
+      html += `</tr></thead><tbody>`;
+      rows.forEach((r, ri) => {
+        html += `<tr><td class="px-3 py-2 text-xs font-bold text-slate-600 dark:text-slate-300">${rowLabels[ri]}</td>`;
+        cols.forEach((c) => {
+          const m = (r << 2) | c;
+          const v = kmapVals[m];
+          const disp = v === 2 ? 'X' : String(v);
+          const bg = v === 1
+            ? 'bg-blue-600 text-white'
+            : v === 2
+              ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-500';
+          const ring = cellGroupMap.has(m) && v !== 0 ? `ring-2 ring-offset-1 dark:ring-offset-slate-900 ${groupColors[cellGroupMap.get(m) % groupColors.length]}` : '';
+          html += `<td class="p-1">
+            <button type="button" data-m="${m}" class="kmap-cell w-14 h-12 sm:w-16 sm:h-14 rounded-xl flex flex-col items-center justify-center font-bold ${bg} ${ring}">
+              <span class="text-base leading-none">${disp}</span>
+              <span class="text-[10px] opacity-70 mt-0.5">m${m}</span>
+            </button>
+          </td>`;
+        });
+        html += `</tr>`;
+      });
+      html += `</tbody></table>`;
+      wrap.innerHTML = html;
+
+      wrap.querySelectorAll('.kmap-cell').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = Number(btn.dataset.m);
+          kmapVals[idx] = (kmapVals[idx] + 1) % 3;
+          renderKMap();
+        });
+      });
+
+      document.getElementById('kmap-sop').textContent = 'F = ' + expr;
+      document.getElementById('kmap-group-count').textContent = `${pis.length} Prime Implicant${pis.length === 1 ? '' : 's'}`;
+
+      const n = 1 << kmapVars;
+      const ms = [], ds = [], Ms = [];
+      for (let i = 0; i < n; i++) {
+        if (kmapVals[i] === 1) ms.push(i);
+        else if (kmapVals[i] === 2) ds.push(i);
+        else Ms.push(i);
+      }
+      document.getElementById('kmap-minterms').textContent = `Σm(${ms.join(',')})` + (ds.length ? ` + d(${ds.join(',')})` : '');
+      document.getElementById('kmap-maxterms').textContent = `ΠM(${Ms.join(',')})`;
+
+      // Truth table
+      const head = document.getElementById('kmap-tt-head');
+      const body = document.getElementById('kmap-tt-body');
+      const colsH = kmapVars === 3 ? ['m', 'A', 'B', 'C', 'F'] : ['m', 'A', 'B', 'C', 'D', 'F'];
+      head.innerHTML = '<tr>' + colsH.map(h => `<th>${h}</th>`).join('') + '</tr>';
+      let rowsHtml = '';
+      for (let i = 0; i < n; i++) {
+        const b = i.toString(2).padStart(kmapVars, '0').split('');
+        const v = kmapVals[i] === 2 ? 'X' : kmapVals[i];
+        const cls = kmapVals[i] === 1 ? 'tt-row-active' : '';
+        rowsHtml += `<tr class="${cls}"><td>${i}</td>${b.map(x => `<td>${x}</td>`).join('')}<td class="font-bold">${v}</td></tr>`;
+      }
+      body.innerHTML = rowsHtml;
+    }
+
+    document.getElementById('kmap-v3').addEventListener('click', () => {
+      kmapVars = 3;
+      kmapVals = new Array(8).fill(0);
+      [1, 3, 5, 7].forEach(i => { kmapVals[i] = 1; });
+      document.getElementById('kmap-v3').className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white';
+      document.getElementById('kmap-v4').className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      renderKMap();
+    });
+    document.getElementById('kmap-v4').addEventListener('click', () => {
+      kmapVars = 4;
+      kmapVals = new Array(16).fill(0);
+      [0,1,2,4,5,6,8,9,12,13,14].forEach(i => { kmapVals[i] = 1; });
+      document.getElementById('kmap-v4').className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white';
+      document.getElementById('kmap-v3').className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      renderKMap();
+    });
+    document.getElementById('kmap-clear').addEventListener('click', () => {
+      kmapVals = new Array(1 << kmapVars).fill(0);
+      renderKMap();
+    });
+    document.querySelectorAll('.kmap-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        kmapVars = 4;
+        document.getElementById('kmap-v4').className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white';
+        document.getElementById('kmap-v3').className = 'px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+        kmapVals = new Array(16).fill(0);
+        const p = btn.dataset.preset;
+        if (p === 'exam1') [0,1,2,4,5,6,8,9,12,13,14].forEach(i => { kmapVals[i] = 1; });
+        else if (p === 'dc') { [1,3,7,11,15].forEach(i => { kmapVals[i] = 1; }); [0,2,5].forEach(i => { kmapVals[i] = 2; }); }
+        else if (p === 'bcd') [10,11,12,13,14,15].forEach(i => { kmapVals[i] = 1; });
+        renderKMap();
+      });
+    });
+
+    /* ==================== UNIT I: ARITHMETIC LAB ==================== */
+    let arithA = [1, 0, 1, 0]; // A3..A0 = 10
+    let arithB = [0, 0, 1, 1]; // B3..B0 = 3
+    let arithM = 0;
+
+    function renderArith() {
+      const aWrap = document.getElementById('arith-a-btns');
+      const bWrap = document.getElementById('arith-b-btns');
+      aWrap.innerHTML = arithA.map((v, i) => `<button type="button" data-ba="${i}" class="py-1.5 rounded-lg mono text-xs font-bold ${v ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700'}">A${3-i}=${v}</button>`).join('');
+      bWrap.innerHTML = arithB.map((v, i) => `<button type="button" data-bb="${i}" class="py-1.5 rounded-lg mono text-xs font-bold ${v ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700'}">B${3-i}=${v}</button>`).join('');
+
+      aWrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { arithA[Number(b.dataset.ba)] ^= 1; renderArith(); }));
+      bWrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { arithB[Number(b.dataset.bb)] ^= 1; renderArith(); }));
+
+      const decA = (arithA[0]<<3)|(arithA[1]<<2)|(arithA[2]<<1)|arithA[3];
+      const decB = (arithB[0]<<3)|(arithB[1]<<2)|(arithB[2]<<1)|arithB[3];
+      document.getElementById('arith-a-dec').textContent = `${arithA.join('')} (${decA})`;
+      document.getElementById('arith-b-dec').textContent = `${arithB.join('')} (${decB})`;
+
+      // Ripple adder-subtractor stage by stage (LSB idx=3 to MSB idx=0)
+      const C = [0, 0, 0, 0, 0]; // C[0]=Cin, C[4]=Cout
+      C[0] = arithM;
+      const S = [0, 0, 0, 0]; // S3..S0
+      const P = [0, 0, 0, 0], G = [0, 0, 0, 0];
+      for (let bit = 0; bit < 4; bit++) {
+        const idx = 3 - bit;
+        const bx = arithB[idx] ^ arithM;
+        const a = arithA[idx];
+        P[bit] = a ^ bx;
+        G[bit] = a & bx;
+        S[idx] = P[bit] ^ C[bit];
+        C[bit + 1] = G[bit] | (P[bit] & C[bit]);
+      }
+      const sumDec = (S[0]<<3)|(S[1]<<2)|(S[2]<<1)|S[3];
+      const overflow = C[4] ^ C[3];
+      const signedVal = arithM === 0 ? (C[4]*16 + sumDec) : (decA - decB);
+      document.getElementById('arith-res-main').textContent = `${S.join('')} (${arithM === 0 ? decA + decB : signedVal})`;
+      document.getElementById('arith-flags').textContent = `Cout (C₄) = ${C[4]} · Signed Overflow (V = C₄⊕C₃) = ${overflow}`;
+
+      // CLA live readout
+      document.getElementById('cla-live-eq').innerHTML = `
+        <div>P = ${P[3]}${P[2]}${P[1]}${P[0]}, G = ${G[3]}${G[2]}${G[1]}${G[0]}</div>
+        <div>C₁ = G₀ + P₀C₀ = <strong>${C[1]}</strong></div>
+        <div>C₂ = G₁ + P₁G₀ + P₁P₀C₀ = <strong>${C[2]}</strong></div>
+        <div>C₃ = G₂ + P₂C₂ = <strong>${C[3]}</strong> · C₄ = <strong>${C[4]}</strong></div>`;
+
+      // BCD Adder live check
+      const rawSum = decA + decB;
+      const bcdCorr = rawSum > 9 ? 1 : 0;
+      document.getElementById('bcd-live-box').innerHTML = decA <= 9 && decB <= 9
+        ? `A+B = ${rawSum} (${rawSum.toString(2).padStart(5,'0')}) → Correction (+6): <strong>${bcdCorr ? 'YES → ' + Math.floor(rawSum/10) + ' ' + (rawSum%10).toString(2).padStart(4,'0') : 'NO'}</strong>`
+        : `Set A,B ≤ 9 to test valid BCD digits (current A=${decA}, B=${decB})`;
+
+      // Comparator
+      const compEl = document.getElementById('comp-live-badge');
+      compEl.textContent = decA > decB ? `A > B  (${decA} > ${decB})` : decA < decB ? `A < B  (${decA} < ${decB})` : `A = B  (${decA} = ${decB})`;
+
+      // Draw SVG 4-bit Adder-Subtractor
+      const svg = document.getElementById('arith-svg');
+      const xs = [130, 320, 510, 700]; // FA3..FA0 left to right
+      let s = `<rect x="20" y="18" width="800" height="28" rx="8" fill="var(--bg-subtle)"/>
+        <text x="42" y="36" font-size="12" font-family="JetBrains Mono" fill="var(--text-muted)">Mode M = ${arithM} (${arithM ? 'SUBTRACT: B⊕1 + 1' : 'ADD: B⊕0 + 0'})</text>`;
+      // Mode bus
+      s += `<line x1="790" y1="32" x2="790" y2="145" class="${arithM ? 'wire-hi' : 'wire-lo'}"/>
+            <line x1="790" y1="145" x2="758" y2="145" class="${arithM ? 'wire-hi' : 'wire-lo'}"/>
+            <text x="804" y="149" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">C₀=${C[0]}</text>`;
+
+      for (let i = 0; i < 4; i++) {
+        const cx = xs[i];
+        const bit = 3 - i;
+        const a = arithA[i], b = arithB[i], bx = b ^ arithM;
+        const cin = C[bit], cout = C[bit + 1], sum = S[i];
+        // XOR box
+        s += `<rect x="${cx + 12}" y="62" width="44" height="28" rx="8" fill="var(--bg-subtle)" stroke="${bx ? 'var(--sig-hi)' : 'var(--border-soft)'}" stroke-width="1.5"/>
+              <text x="${cx + 34}" y="80" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-main)">⊕=${bx}</text>
+              <text x="${cx + 34}" y="55" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">B${bit}=${b}</text>
+              <line x1="${cx + 34}" y1="90" x2="${cx + 34}" y2="118" class="${bx ? 'wire-hi' : 'wire-lo'}"/>`;
+        // A input
+        s += `<text x="${cx - 26}" y="55" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">A${bit}=${a}</text>
+              <line x1="${cx - 26}" y1="62" x2="${cx - 26}" y2="118" class="${a ? 'wire-hi' : 'wire-lo'}"/>`;
+        // FA block
+        s += `<rect x="${cx - 58}" y="118" width="116" height="60" rx="14" fill="var(--bg-card)" stroke="var(--sig-hi)" stroke-width="1.6"/>
+              <text x="${cx}" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">FA ${bit}</text>
+              <text x="${cx}" y="164" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">S${bit}=${sum} C=${cout}</text>`;
+        // Sum output down
+        s += `<line x1="${cx}" y1="178" x2="${cx}" y2="222" class="${sum ? 'wire-ok' : 'wire-lo'}"/>
+              <circle cx="${cx}" cy="236" r="14" fill="${sum ? 'var(--sig-ok)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+              <text x="${cx}" y="240" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="${sum ? '#fff' : 'var(--text-muted)'}">${sum}</text>
+              <text x="${cx}" y="264" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">S${bit}</text>`;
+        // Carry out left
+        if (i > 0) {
+          s += `<line x1="${cx - 58}" y1="145" x2="${xs[i-1] + 58}" y2="145" class="${cout ? 'wire-hi' : 'wire-lo'}"/>
+                <text x="${(cx - 58 + xs[i-1] + 58)/2}" y="138" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">C${bit+1}=${cout}</text>`;
+        } else {
+          s += `<line x1="${cx - 58}" y1="145" x2="26" y2="145" class="${cout ? 'wire-hi' : 'wire-lo'}"/>
+                <text x="42" y="137" font-size="11" font-family="JetBrains Mono" font-weight="700" fill="${cout ? 'var(--sig-hi)' : 'var(--text-muted)'}">C₄=${cout}</text>`;
+        }
+      }
+      svg.innerHTML = s;
+    }
+
+    document.getElementById('arith-mode-add').addEventListener('click', () => {
+      arithM = 0;
+      document.getElementById('arith-mode-add').className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white';
+      document.getElementById('arith-mode-sub').className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+      renderArith();
+    });
+    document.getElementById('arith-mode-sub').addEventListener('click', () => {
+      arithM = 1;
+      document.getElementById('arith-mode-sub').className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white';
+      document.getElementById('arith-mode-add').className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+      renderArith();
+    });
+
+    /* ==================== UNIT II: MUX, 7-SEG, ENCODER, PLD ==================== */
+    let muxS1 = 0, muxS0 = 0, muxIn = [1, 0, 1, 0];
+    function renderMux() {
+      const sel = (muxS1 << 1) | muxS0;
+      const y = muxIn[sel];
+      document.getElementById('mux-s1').textContent = `S₁ = ${muxS1}`;
+      document.getElementById('mux-s1').className = `px-3 py-1 rounded-lg text-xs mono font-bold ${muxS1 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}`;
+      document.getElementById('mux-s0').textContent = `S₀ = ${muxS0}`;
+      document.getElementById('mux-s0').className = `px-3 py-1 rounded-lg text-xs mono font-bold ${muxS0 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}`;
+
+      document.querySelectorAll('.mux-in-btn').forEach(btn => {
+        const i = Number(btn.dataset.idx);
+        btn.textContent = `I${i} = ${muxIn[i]}`;
+        btn.className = `mux-in-btn px-2.5 py-1 rounded-md text-xs mono font-bold ${muxIn[i] ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}`;
+      });
+      document.querySelectorAll('#mux-tt-body tr').forEach((tr, i) => {
+        tr.classList.toggle('tt-row-active', i === sel);
+        tr.querySelector('.mux-y-cell').textContent = muxIn[i];
+      });
+
+      const ys = [48, 92, 136, 180];
+      let s = `<polygon points="240,24 410,56 410,174 240,206" fill="var(--bg-subtle)" stroke="var(--sig-hi)" stroke-width="2"/>
+        <text x="325" y="112" text-anchor="middle" font-size="16" font-weight="700" fill="var(--text-main)">4×1 MUX</text>
+        <text x="325" y="134" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="var(--sig-hi)">Active: I${sel}</text>`;
+      ys.forEach((yy, i) => {
+        const active = i === sel;
+        s += `<line x1="70" y1="${yy}" x2="240" y2="${yy}" class="${active ? (muxIn[i] ? 'wire-ok' : 'wire-hi') : 'wire-lo'}"/>
+              <text x="42" y="${yy + 4}" font-size="13" font-family="JetBrains Mono" font-weight="${active ? '700' : '400'}" fill="${active ? 'var(--sig-hi)' : 'var(--text-muted)'}">I${i}=${muxIn[i]}</text>`;
+      });
+      // Select lines
+      s += `<line x1="295" y1="240" x2="295" y2="196" class="${muxS1 ? 'wire-hi' : 'wire-lo'}"/>
+            <text x="295" y="248" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="var(--text-main)">S₁=${muxS1}</text>
+            <line x1="355" y1="240" x2="355" y2="185" class="${muxS0 ? 'wire-hi' : 'wire-lo'}"/>
+            <text x="355" y="248" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="var(--text-main)">S₀=${muxS0}</text>`;
+      // Output Y
+      s += `<line x1="410" y1="115" x2="540" y2="115" class="${y ? 'wire-ok' : 'wire-hi'}"/>
+            <rect x="540" y="95" width="90" height="40" rx="12" fill="${y ? 'var(--sig-ok)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+            <text x="585" y="120" text-anchor="middle" font-size="15" font-family="JetBrains Mono" font-weight="700" fill="${y ? '#fff' : 'var(--text-main)'}">Y = ${y}</text>`;
+      document.getElementById('mux-svg').innerHTML = s;
+    }
+    document.getElementById('mux-s1').addEventListener('click', () => { muxS1 ^= 1; renderMux(); });
+    document.getElementById('mux-s0').addEventListener('click', () => { muxS0 ^= 1; renderMux(); });
+    document.querySelectorAll('.mux-in-btn').forEach(btn => {
+      btn.addEventListener('click', () => { muxIn[Number(btn.dataset.idx)] ^= 1; renderMux(); });
+    });
+
+    // 7-Segment BCD Decoder
+    const SEG_MAP = [
+      [1,1,1,1,1,1,0], // 0
+      [0,1,1,0,0,0,0], // 1
+      [1,1,0,1,1,0,1], // 2
+      [1,1,1,1,0,0,1], // 3
+      [0,1,1,0,0,1,1], // 4
+      [1,0,1,1,0,1,1], // 5
+      [1,0,1,1,1,1,1], // 6
+      [1,1,1,0,0,0,0], // 7
+      [1,1,1,1,1,1,1], // 8
+      [1,1,1,1,0,1,1], // 9
+    ];
+    let bcdDigit = 5;
+    function render7Seg() {
+      const wrap = document.getElementById('bcd-digit-btns');
+      wrap.innerHTML = Array.from({length: 10}, (_, d) =>
+        `<button type="button" data-d="${d}" class="py-1.5 rounded-lg mono text-xs font-bold ${d === bcdDigit ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800'}">${d}</button>`
+      ).join('');
+      wrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { bcdDigit = Number(b.dataset.d); render7Seg(); }));
+
+      const bits = SEG_MAP[bcdDigit];
+      document.getElementById('seg-bcd-bits').textContent = bcdDigit.toString(2).padStart(4, '0').split('').join(' ');
+      document.getElementById('seg-bits').textContent = bits.join(' ');
+
+      const polys = [
+        '28,20 112,20 100,32 40,32',   // a
+        '114,24 114,104 102,94 102,36', // b
+        '114,114 114,194 102,182 102,124', // c
+        '28,198 112,198 100,186 40,186', // d
+        '26,114 26,194 38,182 38,124', // e
+        '26,24 26,104 38,94 38,36',    // f
+        '32,109 42,101 98,101 108,109 98,117 42,117' // g
+      ];
+      const lbls = [[70,15,'a'],[124,65,'b'],[124,155,'c'],[70,213,'d'],[14,155,'e'],[14,65,'f'],[70,109,'g']];
+      let s = '';
+      polys.forEach((p, i) => {
+        s += `<polygon points="${p}" class="${bits[i] ? 'seg-on' : 'seg-off'}"/>`;
+      });
+      lbls.forEach(([x,y,t]) => {
+        s += `<text x="${x}" y="${y}" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#94a3b8">${t}</text>`;
+      });
+      document.getElementById('seg-svg').innerHTML = s;
+    }
+
+    // 4-to-2 Priority Encoder
+    let penc = [0, 1, 0, 1]; // D3..D0
+    function renderPenc() {
+      const wrap = document.getElementById('penc-btns');
+      wrap.innerHTML = penc.map((v, i) =>
+        `<button type="button" data-pi="${i}" class="py-2 rounded-lg mono text-xs font-bold ${v ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800'}">D${3-i} = ${v}</button>`
+      ).join('');
+      wrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { penc[Number(b.dataset.pi)] ^= 1; renderPenc(); }));
+      const [d3, d2, d1, d0] = penc;
+      let x = '×', y = '×', v = 0, pKey = 'none';
+      if (d3) { x = 1; y = 1; v = 1; pKey = '3'; }
+      else if (d2) { x = 1; y = 0; v = 1; pKey = '2'; }
+      else if (d1) { x = 0; y = 1; v = 1; pKey = '1'; }
+      else if (d0) { x = 0; y = 0; v = 1; pKey = '0'; }
+      document.getElementById('penc-x').textContent = x;
+      document.getElementById('penc-y').textContent = y;
+      document.getElementById('penc-v').textContent = v;
+      document.querySelectorAll('#penc-tt tr').forEach(tr => tr.classList.toggle('tt-row-active', tr.dataset.p === pKey));
+    }
+
+    // PLD Visualizer (PROM, PAL, PLA)
+    let activePld = 'prom';
+    const PLD_INFO = {
+      prom: {
+        andFixed: true, orFixed: false,
+        desc: '<strong>PROM (Programmable Read-Only Memory):</strong> Uses a <strong>Fixed AND array</strong> (an n-to-2ⁿ decoder generating every minterm) feeding a <strong>Programmable OR array</strong>. Ideal for implementing canonical SOP lookup tables.'
+      },
+      pal: {
+        andFixed: false, orFixed: true,
+        desc: '<strong>PAL (Programmable Array Logic):</strong> Uses a <strong>Programmable AND array</strong> feeding a <strong>Fixed OR array</strong>. Faster and cheaper than PLA, though product terms cannot be shared across different OR gates.'
+      },
+      pla: {
+        andFixed: false, orFixed: false,
+        desc: '<strong>PLA (Programmable Logic Array):</strong> Both the <strong>AND array</strong> and the <strong>OR array are Programmable</strong>. Maximum flexibility because any minimized product term can be shared across multiple outputs (F₁, F₂...).'
+      }
+    };
+    function renderPld() {
+      const cfg = PLD_INFO[activePld];
+      document.querySelectorAll('.pld-btn').forEach(b => {
+        b.className = b.dataset.pld === activePld
+          ? 'pld-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+          : 'pld-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      });
+      document.getElementById('pld-desc').innerHTML = cfg.desc;
+      document.getElementById('pld-svg').innerHTML = `
+        <rect x="20" y="45" width="110" height="80" rx="14" fill="var(--bg-subtle)" stroke="var(--border-soft)"/>
+        <text x="75" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">Inputs</text>
+        <text x="75" y="100" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">A, A', B, B'...</text>
+
+        <line x1="130" y1="85" x2="185" y2="85" class="wire-hi"/>
+
+        <rect x="185" y="30" width="175" height="110" rx="16" fill="${cfg.andFixed ? 'var(--bg-subtle)' : 'rgba(37,99,235,0.12)'}" stroke="${cfg.andFixed ? 'var(--border-soft)' : 'var(--sig-hi)'}" stroke-width="2"/>
+        <text x="272" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text-main)">AND Array</text>
+        <text x="272" y="96" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="${cfg.andFixed ? 'var(--text-muted)' : 'var(--sig-hi)'}">${cfg.andFixed ? 'FIXED (Decoder)' : 'PROGRAMMABLE'}</text>
+        <text x="272" y="118" text-anchor="middle" font-size="11" fill="var(--text-muted)">Product Terms</text>
+
+        <line x1="360" y1="85" x2="415" y2="85" class="wire-hi"/>
+
+        <rect x="415" y="30" width="175" height="110" rx="16" fill="${cfg.orFixed ? 'var(--bg-subtle)' : 'rgba(5,150,105,0.12)'}" stroke="${cfg.orFixed ? 'var(--border-soft)' : 'var(--sig-ok)'}" stroke-width="2"/>
+        <text x="502" y="74" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text-main)">OR Array</text>
+        <text x="502" y="96" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="${cfg.orFixed ? 'var(--text-muted)' : 'var(--sig-ok)'}">${cfg.orFixed ? 'FIXED' : 'PROGRAMMABLE'}</text>
+        <text x="502" y="118" text-anchor="middle" font-size="11" fill="var(--text-muted)">Sum of Products</text>
+
+        <line x1="590" y1="85" x2="635" y2="85" class="wire-ok"/>
+
+        <rect x="635" y="45" width="90" height="80" rx="14" fill="var(--bg-subtle)" stroke="var(--border-soft)"/>
+        <text x="680" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">Outputs</text>
+        <text x="680" y="100" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">F₁, F₂...</text>
+      `;
+    }
+    document.querySelectorAll('.pld-btn').forEach(b => b.addEventListener('click', () => { activePld = b.dataset.pld; renderPld(); }));
+
+    /* ==================== UNIT III: UNIVERSAL SHIFT REGISTER ==================== */
+    let usrMode = '00';
+    let usrBits = [1, 0, 1, 1]; // A3, A2, A1, A0
+    let usrSir = 1, usrSil = 0;
+    let usrPar = [1, 0, 1, 1]; // I3, I2, I1, I0
+
+    const USR_INFO = {
+      '00': { title: 'Mode 00 — Hold (No Change)', eq: 'A₃⁺ = A₃,  A₂⁺ = A₂,  A₁⁺ = A₁,  A₀⁺ = A₀', desc: 'MUX selects pin 0: each flip-flop feeds its own output Q back into D, retaining data across clock pulses.' },
+      '01': { title: 'Mode 01 — Shift Right', eq: 'A₃⁺ = SIR,  A₂⁺ = A₃,  A₁⁺ = A₂,  A₀⁺ = A₁', desc: 'MUX selects pin 1: SIR enters MSB A₃ and every bit shifts one stage to the right on CLK ↑.' },
+      '10': { title: 'Mode 10 — Shift Left', eq: 'A₃⁺ = A₂,  A₂⁺ = A₁,  A₁⁺ = A₀,  A₀⁺ = SIL', desc: 'MUX selects pin 2: SIL enters LSB A₀ and every bit shifts one stage to the left on CLK ↑.' },
+      '11': { title: 'Mode 11 — Parallel Load', eq: 'A₃⁺ = I₃,  A₂⁺ = I₂,  A₁⁺ = I₁,  A₀⁺ = I₀', desc: 'MUX selects pin 3: all four parallel inputs I₃–I₀ load simultaneously on a single clock edge.' },
+    };
+
+    function renderUsr() {
+      document.querySelectorAll('.usr-mode-btn').forEach(b => {
+        const on = b.dataset.umode === usrMode;
+        b.className = on
+          ? 'usr-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+          : 'usr-mode-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700';
+      });
+      document.querySelectorAll('#usr-tt tr').forEach(tr => tr.classList.toggle('tt-row-active', tr.dataset.um === usrMode));
+
+      document.getElementById('usr-sir-btn').textContent = `SIR=${usrSir}`;
+      document.getElementById('usr-sil-btn').textContent = `SIL=${usrSil}`;
+      document.querySelectorAll('.usr-pi-btn').forEach(b => {
+        const idx = 3 - Number(b.dataset.pi);
+        const v = usrPar[idx];
+        b.textContent = `I${b.dataset.pi}=${v}`;
+        b.className = `usr-pi-btn px-2 py-1 rounded-md font-bold ${v ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' : 'bg-slate-200 dark:bg-slate-700'}`;
+      });
+
+      const info = USR_INFO[usrMode];
+      document.getElementById('usr-mode-title').textContent = info.title;
+      document.getElementById('usr-mode-eq').textContent = info.eq;
+      document.getElementById('usr-mode-desc').textContent = info.desc;
+
+      const cxs = [140, 340, 540, 740];
+      const wCls = m => m === usrMode ? 'wire-hi' : 'wire-lo';
+      let s = `<defs>
+        <marker id="u-arr" viewBox="0 0 10 10" refX="7.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto">
+          <path d="M 3 1.5 L 7.5 5 L 3 8.5" fill="none" stroke="var(--text-main)" stroke-width="1.3"/>
+        </marker>
+        <marker id="u-arr-hi" viewBox="0 0 10 10" refX="7.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto">
+          <path d="M 3 1.5 L 7.5 5 L 3 8.5" fill="none" stroke="var(--sig-hi)" stroke-width="1.8"/>
+        </marker>
+      </defs>`;
+
+      // Control buses
+      s += `<text x="12" y="182" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">CLK</text>
+            <path class="wire-ctrl" d="M 42 178 L 704 178"/>
+            <text x="12" y="198" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">CLR</text>
+            <path class="wire-ctrl" d="M 42 194 L 776 194"/>
+            <text x="8" y="216" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">S₁,S₀</text>
+            <path class="wire-ctrl" d="M 46 212 L 704 212"/>`;
+
+      // Mode 00 Hold wires
+      const mk00 = usrMode === '00' ? 'url(#u-arr-hi)' : '';
+      cxs.forEach(cx => {
+        s += `<path class="${wCls('00')}" opacity="${usrMode==='00'?1:0.3}" d="M ${cx} 56 L ${cx-84} 56 L ${cx-84} 336 L ${cx-42} 336 L ${cx-42} 314" marker-end="${mk00}"/>`;
+      });
+      // Mode 01 Shift Right wires
+      const mk01 = usrMode === '01' ? 'url(#u-arr-hi)' : '';
+      s += `<path class="${wCls('01')}" opacity="${usrMode==='01'?1:0.3}" d="M 42 356 L 126 356 L 126 314" marker-end="${mk01}"/>`;
+      [0,1,2].forEach(i => {
+        s += `<path class="${wCls('01')}" opacity="${usrMode==='01'?1:0.3}" d="M ${cxs[i]} 56 L ${cxs[i]+84} 56 L ${cxs[i]+84} 356 L ${cxs[i+1]-14} 356 L ${cxs[i+1]-14} 314" marker-end="${mk01}"/>`;
+      });
+      // Mode 10 Shift Left wires
+      const mk10 = usrMode === '10' ? 'url(#u-arr-hi)' : '';
+      [1,2,3].forEach(i => {
+        s += `<path class="${wCls('10')}" opacity="${usrMode==='10'?1:0.3}" d="M ${cxs[i]} 56 L ${cxs[i]-100} 56 L ${cxs[i]-100} 376 L ${cxs[i-1]+14} 376 L ${cxs[i-1]+14} 314" marker-end="${mk10}"/>`;
+      });
+      s += `<path class="${wCls('10')}" opacity="${usrMode==='10'?1:0.3}" d="M 836 376 L 754 376 L 754 314" marker-end="${mk10}"/>`;
+      // Mode 11 Parallel Load wires
+      const mk11 = usrMode === '11' ? 'url(#u-arr-hi)' : '';
+      cxs.forEach(cx => {
+        s += `<line class="${wCls('11')}" opacity="${usrMode==='11'?1:0.3}" x1="${cx+42}" y1="396" x2="${cx+42}" y2="314" marker-end="${mk11}"/>`;
+      });
+
+      // Labels SIR, SIL, I3..I0
+      s += `<text x="8" y="360" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="${usrMode==='01'?'var(--sig-hi)':'var(--text-muted)'}">SIR=${usrSir}</text>
+            <text x="840" y="380" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="${usrMode==='10'?'var(--sig-hi)':'var(--text-muted)'}">SIL=${usrSil}</text>`;
+
+      cxs.forEach((cx, i) => {
+        const bitIdx = 3 - i;
+        const val = usrBits[i];
+        // Output up
+        s += `<line x1="${cx}" y1="86" x2="${cx}" y2="34" class="${val ? 'wire-ok' : 'wire-lo'}" marker-end="url(#u-arr)"/>
+              <circle cx="${cx}" cy="56" r="3.5" fill="var(--text-main)"/>
+              <text x="${cx}" y="22" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="${val ? 'var(--sig-ok)' : 'var(--text-main)'}">A${bitIdx} = ${val}</text>`;
+        // CLK / CLR / S taps
+        s += `<line class="wire-ctrl" x1="${cx-36}" y1="178" x2="${cx-36}" y2="158"/>
+              <line class="wire-ctrl" x1="${cx+36}" y1="194" x2="${cx+36}" y2="158"/>
+              <line class="wire-ctrl" x1="${cx-36}" y1="212" x2="${cx-36}" y2="234"/>`;
+        // MUX -> D wire
+        s += `<line x1="${cx}" y1="234" x2="${cx}" y2="162" class="wire-hi" marker-end="url(#u-arr-hi)"/>`;
+        // D-FF box
+        s += `<rect x="${cx-60}" y="86" width="120" height="72" rx="18" fill="var(--bg-card)" stroke="${val ? 'var(--sig-ok)' : 'var(--border-soft)'}" stroke-width="2"/>
+              <text x="${cx}" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-main)">D-FF ${bitIdx}</text>
+              <text x="${cx}" y="138" text-anchor="middle" font-size="16" font-family="JetBrains Mono" font-weight="800" fill="${val ? 'var(--sig-ok)' : 'var(--text-muted)'}">${val}</text>`;
+        // 4x1 MUX box
+        s += `<rect x="${cx-64}" y="234" width="128" height="76" rx="18" fill="var(--bg-subtle)" stroke="var(--border-soft)" stroke-width="1.5"/>
+              <text x="${cx}" y="264" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">4×1 MUX ${bitIdx}</text>`;
+        ['00','01','10','11'].forEach((pm, pi) => {
+          const px = cx - 42 + pi * 28;
+          s += `<text x="${px}" y="298" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="${pm===usrMode?'700':'400'}" fill="${pm===usrMode?'var(--sig-hi)':'var(--text-muted)'}">${pi}</text>`;
+        });
+        // I label
+        s += `<text x="${cx+42}" y="412" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="${usrMode==='11'?'var(--sig-hi)':'var(--text-muted)'}">I${bitIdx}=${usrPar[i]}</text>`;
+      });
+
+      document.getElementById('usr-svg').innerHTML = s;
+    }
+
+    document.querySelectorAll('.usr-mode-btn').forEach(b => b.addEventListener('click', () => { usrMode = b.dataset.umode; renderUsr(); }));
+    document.getElementById('usr-sir-btn').addEventListener('click', () => { usrSir ^= 1; renderUsr(); });
+    document.getElementById('usr-sil-btn').addEventListener('click', () => { usrSil ^= 1; renderUsr(); });
+    document.querySelectorAll('.usr-pi-btn').forEach(b => b.addEventListener('click', () => { usrPar[3 - Number(b.dataset.pi)] ^= 1; renderUsr(); }));
+    document.getElementById('usr-clr-btn').addEventListener('click', () => { usrBits = [0,0,0,0]; renderUsr(); });
+    document.getElementById('usr-clk-btn').addEventListener('click', () => {
+      if (usrMode === '01') usrBits = [usrSir, usrBits[0], usrBits[1], usrBits[2]];
+      else if (usrMode === '10') usrBits = [usrBits[1], usrBits[2], usrBits[3], usrSil];
+      else if (usrMode === '11') usrBits = [...usrPar];
+      renderUsr();
+    });
+
+    /* ==================== UNIT III: FLIP-FLOP LAB ==================== */
+    let ffType = 'JK', ffQ = 0, ffIn1 = 1, ffIn2 = 0, ffLastMsg = 'Ready — toggle inputs and click Pulse CLK ↑.';
+    const FF_EQ = {
+      JK: "Q(t+1) = J·Q' + K'·Q",
+      SR: "Q(t+1) = S + R'·Q  (S·R = 0)",
+      D: 'Q(t+1) = D',
+      T: 'Q(t+1) = T ⊕ Q',
+    };
+    function renderFF() {
+      document.querySelectorAll('.ff-type-btn').forEach(b => {
+        b.className = b.dataset.ff === ffType
+          ? 'ff-type-btn px-2.5 py-1 rounded-md text-xs font-bold bg-blue-600 text-white'
+          : 'ff-type-btn px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800';
+      });
+      const inWrap = document.getElementById('ff-input-btns');
+      if (ffType === 'JK' || ffType === 'SR') {
+        const l1 = ffType[0], l2 = ffType[1];
+        inWrap.innerHTML = `
+          <button type="button" id="ff-b1" class="px-3 py-1.5 rounded-lg mono text-xs font-bold ${ffIn1 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">${l1} = ${ffIn1}</button>
+          <button type="button" id="ff-b2" class="px-3 py-1.5 rounded-lg mono text-xs font-bold ${ffIn2 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">${l2} = ${ffIn2}</button>`;
+        document.getElementById('ff-b1').addEventListener('click', () => { ffIn1 ^= 1; renderFF(); });
+        document.getElementById('ff-b2').addEventListener('click', () => { ffIn2 ^= 1; renderFF(); });
+      } else {
+        inWrap.innerHTML = `<button type="button" id="ff-b1" class="px-3 py-1.5 rounded-lg mono text-xs font-bold ${ffIn1 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">${ffType} = ${ffIn1}</button>`;
+        document.getElementById('ff-b1').addEventListener('click', () => { ffIn1 ^= 1; renderFF(); });
+      }
+
+      document.getElementById('ff-char-eq').textContent = FF_EQ[ffType];
+      document.getElementById('ff-status').textContent = ffLastMsg;
+
+      const qBar = ffQ ^ 1;
+      const twoIn = ffType === 'JK' || ffType === 'SR';
+      const l1 = twoIn ? ffType[0] : ffType;
+      const l2 = twoIn ? ffType[1] : '';
+      document.getElementById('ff-svg').innerHTML = `
+        <line x1="60" y1="62" x2="150" y2="62" class="${ffIn1 ? 'wire-hi' : 'wire-lo'}"/>
+        <text x="36" y="66" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--text-main)">${l1}=${ffIn1}</text>
+        ${twoIn ? `<line x1="60" y1="132" x2="150" y2="132" class="${ffIn2 ? 'wire-hi' : 'wire-lo'}"/>
+        <text x="36" y="136" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--text-main)">${l2}=${ffIn2}</text>` : ''}
+        <line x1="60" y1="97" x2="150" y2="97" class="wire-ctrl"/>
+        <text x="28" y="101" font-size="12" font-family="JetBrains Mono" fill="var(--text-muted)">CLK</text>
+
+        <rect x="150" y="34" width="160" height="126" rx="20" fill="var(--bg-subtle)" stroke="var(--sig-hi)" stroke-width="2"/>
+        <polygon points="150,89 162,97 150,105" fill="none" stroke="var(--text-main)" stroke-width="1.5"/>
+        <text x="230" y="92" text-anchor="middle" font-size="17" font-weight="800" fill="var(--text-main)">${ffType} Flip-Flop</text>
+        <text x="230" y="114" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">Positive Edge ↑</text>
+
+        <line x1="310" y1="62" x2="390" y2="62" class="${ffQ ? 'wire-ok' : 'wire-lo'}"/>
+        <rect x="390" y="46" width="54" height="32" rx="10" fill="${ffQ ? 'var(--sig-ok)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+        <text x="417" y="67" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="${ffQ ? '#fff' : 'var(--text-main)'}">Q=${ffQ}</text>
+
+        <line x1="310" y1="132" x2="390" y2="132" class="${qBar ? 'wire-hi' : 'wire-lo'}"/>
+        <rect x="390" y="116" width="54" height="32" rx="10" fill="${qBar ? 'var(--sig-hi)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+        <text x="417" y="137" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="${qBar ? '#fff' : 'var(--text-main)'}">Q'=${qBar}</text>
+      `;
+    }
+    document.querySelectorAll('.ff-type-btn').forEach(b => b.addEventListener('click', () => {
+      ffType = b.dataset.ff;
+      ffLastMsg = `Switched to ${ffType} Flip-Flop.`;
+      renderFF();
+    }));
+    document.getElementById('ff-clr').addEventListener('click', () => { ffQ = 0; ffLastMsg = 'Asynchronous CLR asserted → Q = 0.'; renderFF(); });
+    document.getElementById('ff-clk').addEventListener('click', () => {
+      if (ffType === 'JK') {
+        if (ffIn1 === 0 && ffIn2 === 0) ffLastMsg = 'J=0, K=0 → Hold (No Change).';
+        else if (ffIn1 === 0 && ffIn2 === 1) { ffQ = 0; ffLastMsg = 'J=0, K=1 → Reset (Q = 0).'; }
+        else if (ffIn1 === 1 && ffIn2 === 0) { ffQ = 1; ffLastMsg = 'J=1, K=0 → Set (Q = 1).'; }
+        else { ffQ ^= 1; ffLastMsg = `J=1, K=1 → Toggle (Q = ${ffQ}).`; }
+      } else if (ffType === 'SR') {
+        if (ffIn1 === 0 && ffIn2 === 0) ffLastMsg = 'S=0, R=0 → Hold (No Change).';
+        else if (ffIn1 === 0 && ffIn2 === 1) { ffQ = 0; ffLastMsg = 'S=0, R=1 → Reset (Q = 0).'; }
+        else if (ffIn1 === 1 && ffIn2 === 0) { ffQ = 1; ffLastMsg = 'S=1, R=0 → Set (Q = 1).'; }
+        else ffLastMsg = 'S=1, R=1 → INVALID / Forbidden state in SR Flip-Flop!';
+      } else if (ffType === 'D') {
+        ffQ = ffIn1;
+        ffLastMsg = `D=${ffIn1} → Q follows D (Q = ${ffQ}).`;
+      } else {
+        if (ffIn1) { ffQ ^= 1; ffLastMsg = `T=1 → Toggle (Q = ${ffQ}).`; }
+        else ffLastMsg = 'T=0 → Hold (No Change).';
+      }
+      renderFF();
+    });
+
+    /* ==================== UNIT III: COUNTERS & WAVEFORMS ==================== */
+    let cntMode = 'sync', cntBits = [0,0,0,0], cntCycle = 0, cntHistory = [[0,0,0,0]], cntTimer = null;
+    const CNT_NOTES = {
+      sync: '<strong>4-Bit Synchronous Counter (Mod-16):</strong> All 4 flip-flops share a common clock. Counts 0000 → 1111 (16 states) with zero ripple delay.',
+      mod10: '<strong>Mod-10 (BCD Decade) Counter:</strong> Counts 0000 → 1001 (0 to 9), then resets to 0000 on state 1010 using a NAND reset gate on Q₃·Q₁.',
+      ring: '<strong>4-Bit Ring Counter:</strong> Q₀ feeds back directly to D₃. A single circulating 1 produces exactly N = 4 states (1000 → 0100 → 0010 → 0001).',
+      johnson: '<strong>4-Bit Johnson (Twisted Ring) Counter:</strong> Complemented output Q₀\' feeds back to D₃. Produces 2N = 8 glitch-free states (0000 → 1000 → 1100 → 1110 → 1111 → 0111 → 0011 → 0001).',
+    };
+    function resetCounter() {
+      if (cntTimer) { clearInterval(cntTimer); cntTimer = null; document.getElementById('cnt-auto').textContent = 'Auto-Clock'; }
+      cntCycle = 0;
+      cntBits = cntMode === 'ring' ? [1,0,0,0] : [0,0,0,0];
+      cntHistory = [[...cntBits]];
+      renderCounter();
+    }
+    function stepCounter() {
+      cntCycle++;
+      if (cntMode === 'sync') {
+        const v = (((cntBits[0]<<3)|(cntBits[1]<<2)|(cntBits[2]<<1)|cntBits[3]) + 1) % 16;
+        cntBits = [(v>>3)&1, (v>>2)&1, (v>>1)&1, v&1];
+      } else if (cntMode === 'mod10') {
+        const v = (((cntBits[0]<<3)|(cntBits[1]<<2)|(cntBits[2]<<1)|cntBits[3]) + 1) % 10;
+        cntBits = [(v>>3)&1, (v>>2)&1, (v>>1)&1, v&1];
+      } else if (cntMode === 'ring') {
+        cntBits = [cntBits[3], cntBits[0], cntBits[1], cntBits[2]];
+      } else {
+        cntBits = [cntBits[3] ^ 1, cntBits[0], cntBits[1], cntBits[2]];
+      }
+      cntHistory.push([...cntBits]);
+      if (cntHistory.length > 10) cntHistory.shift();
+      renderCounter();
+    }
+    function renderCounter() {
+      document.querySelectorAll('.cnt-mode-btn').forEach(b => {
+        b.className = b.dataset.cnt === cntMode
+          ? 'cnt-mode-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+          : 'cnt-mode-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      });
+      const dec = (cntBits[0]<<3)|(cntBits[1]<<2)|(cntBits[2]<<1)|cntBits[3];
+      document.getElementById('cnt-state-readout').textContent = `State: ${cntBits.join('')} (${dec}) · Cycle ${cntCycle}`;
+      document.getElementById('cnt-note').innerHTML = CNT_NOTES[cntMode];
+      document.getElementById('cnt-leds').innerHTML = cntBits.map((v, i) => `
+        <div class="subtle-box p-3 text-center border-2 ${v ? 'border-emerald-500' : 'border-transparent'}">
+          <div class="text-xs text-slate-500 mono">Q${3-i}</div>
+          <div class="mono text-2xl font-extrabold ${v ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}">${v}</div>
+        </div>`).join('');
+
+      // Render timing waveform SVG
+      const stepW = 66, x0 = 60;
+      let s = '';
+      // CLK row
+      s += `<text x="14" y="30" font-size="12" font-family="JetBrains Mono" fill="var(--text-muted)">CLK</text>`;
+      let clkPath = `M ${x0} 36`;
+      for (let t = 0; t < 10; t++) {
+        const x = x0 + t * stepW;
+        clkPath += ` L ${x} 16 L ${x + stepW/2} 16 L ${x + stepW/2} 36 L ${x + stepW} 36`;
+      }
+      s += `<path d="${clkPath}" class="wire-ctrl"/>`;
+
+      // Q3..Q0 waveforms
+      for (let row = 0; row < 4; row++) {
+        const yHi = 58 + row * 36, yLo = 78 + row * 36;
+        s += `<text x="14" y="${yLo - 4}" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="var(--text-main)">Q${3-row}</text>`;
+        let d = '';
+        cntHistory.forEach((st, t) => {
+          const x = x0 + t * stepW;
+          const y = st[row] ? yHi : yLo;
+          if (t === 0) d += `M ${x} ${y} L ${x + stepW} ${y}`;
+          else d += ` L ${x} ${y} L ${x + stepW} ${y}`;
+        });
+        s += `<path d="${d}" class="${row === 3 ? 'wire-ok' : 'wire-hi'}"/>`;
+      }
+      document.getElementById('cnt-wave-svg').innerHTML = s;
+    }
+    document.querySelectorAll('.cnt-mode-btn').forEach(b => b.addEventListener('click', () => { cntMode = b.dataset.cnt; resetCounter(); }));
+    document.getElementById('cnt-step').addEventListener('click', stepCounter);
+    document.getElementById('cnt-reset').addEventListener('click', resetCounter);
+    document.getElementById('cnt-auto').addEventListener('click', () => {
+      if (cntTimer) {
+        clearInterval(cntTimer); cntTimer = null;
+        document.getElementById('cnt-auto').textContent = 'Auto-Clock';
+      } else {
+        cntTimer = setInterval(stepCounter, 650);
+        document.getElementById('cnt-auto').textContent = 'Stop Clock';
+      }
+    });
+
+    /* ==================== UNIT IV: MEALY / MOORE FSM ==================== */
+    let fsmModel = 'mealy', fsmState = 'S0', fsmHistX = [], fsmHistS = ['S0'], fsmHistZ = [];
+    const FSM_DATA = {
+      mealy: {
+        states: ['S0', 'S1', 'S2', 'S3'],
+        trans: {
+          S0: { 0: ['S0', 0], 1: ['S1', 0] },
+          S1: { 0: ['S2', 0], 1: ['S1', 0] },
+          S2: { 0: ['S0', 0], 1: ['S3', 0] },
+          S3: { 0: ['S2', 0], 1: ['S1', 1] },
+        },
+        mooreOut: null,
+      },
+      moore: {
+        states: ['S0', 'S1', 'S2', 'S3', 'S4'],
+        trans: {
+          S0: { 0: ['S0', 0], 1: ['S1', 0] },
+          S1: { 0: ['S2', 0], 1: ['S1', 0] },
+          S2: { 0: ['S0', 0], 1: ['S3', 0] },
+          S3: { 0: ['S2', 0], 1: ['S4', 1] },
+          S4: { 0: ['S2', 0], 1: ['S1', 0] },
+        },
+        mooreOut: { S0: 0, S1: 0, S2: 0, S3: 0, S4: 1 },
+      },
+    };
+    function resetFsm() {
+      fsmState = 'S0'; fsmHistX = []; fsmHistS = ['S0']; fsmHistZ = [];
+      renderFsm();
+    }
+    function feedFsm(bit) {
+      const cfg = FSM_DATA[fsmModel];
+      const [ns, out] = cfg.trans[fsmState][bit];
+      fsmState = ns;
+      fsmHistX.push(bit);
+      fsmHistS.push(ns);
+      fsmHistZ.push(fsmModel === 'moore' ? cfg.mooreOut[ns] : out);
+      if (fsmHistX.length > 14) { fsmHistX.shift(); fsmHistS.shift(); fsmHistZ.shift(); }
+      renderFsm();
+    }
+    function renderFsm() {
+      const cfg = FSM_DATA[fsmModel];
+      document.getElementById('fsm-mealy-btn').className = fsmModel === 'mealy' ? 'px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white' : 'px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      document.getElementById('fsm-moore-btn').className = fsmModel === 'moore' ? 'px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white' : 'px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+
+      document.getElementById('fsm-hist-x').textContent = fsmHistX.length ? fsmHistX.join(' ') : '—';
+      document.getElementById('fsm-hist-s').textContent = fsmHistS.join(' → ');
+      document.getElementById('fsm-hist-z').innerHTML = fsmHistZ.length
+        ? fsmHistZ.map(z => z ? '<span class="px-1.5 py-0.5 rounded bg-emerald-600 text-white">1</span>' : '0').join(' ')
+        : '—';
+
+      // State table
+      document.getElementById('fsm-tt-body').innerHTML = cfg.states.map(st => {
+        const t0 = cfg.trans[st][0], t1 = cfg.trans[st][1];
+        const outCol = fsmModel === 'moore' ? `Z = ${cfg.mooreOut[st]}` : `X=0:${t0[1]} / X=1:${t1[1]}`;
+        return `<tr class="${st === fsmState ? 'tt-row-active' : ''}">
+          <td class="font-bold">${st}</td><td>${t0[0]}</td><td>${t1[0]}</td><td>${outCol}</td>
+        </tr>`;
+      }).join('');
+
+      // SVG State Diagram
+      const n = cfg.states.length;
+      const xs = n === 4 ? [110, 280, 450, 620] : [80, 220, 360, 500, 640];
+      let s = `<defs><marker id="f-arr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="9" markerHeight="9" orient="auto">
+        <path d="M 2 1.5 L 8 5 L 2 8.5" fill="none" stroke="var(--sig-hi)" stroke-width="1.6"/></marker></defs>`;
+
+      // Forward arrows S0->S1->S2->S3(->S4)
+      const fwdLabels = fsmModel === 'mealy' ? ['1/0', '0/0', '1/0'] : ['1', '0', '1', '1'];
+      for (let i = 0; i < n - 1; i++) {
+        s += `<line x1="${xs[i]+34}" y1="110" x2="${xs[i+1]-36}" y2="110" class="wire-hi" marker-end="url(#f-arr)"/>
+              <text x="${(xs[i]+xs[i+1])/2}" y="100" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-hi)">${fwdLabels[i]}</text>`;
+      }
+      // Overlap return arrow (S3->S1 in Mealy with 1/1; S4->S1 in Moore)
+      if (fsmModel === 'mealy') {
+        s += `<path d="M ${xs[3]} 74 Q ${(xs[3]+xs[1])/2} 14 ${xs[1]} 74" class="wire-ok" marker-end="url(#f-arr)"/>
+              <text x="${(xs[3]+xs[1])/2}" y="38" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-ok)">1 / 1 (DETECT!)</text>
+              <path d="M ${xs[3]} 146 Q ${(xs[3]+xs[2])/2} 198 ${xs[2]} 146" class="wire-lo" marker-end="url(#f-arr)"/>
+              <text x="${(xs[3]+xs[2])/2}" y="188" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">0/0</text>`;
+      } else {
+        s += `<path d="M ${xs[4]} 74 Q ${(xs[4]+xs[1])/2} 14 ${xs[1]} 74" class="wire-ok" marker-end="url(#f-arr)"/>
+              <text x="${(xs[4]+xs[1])/2}" y="38" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-ok)">1 (overlap)</text>
+              <path d="M ${xs[4]} 146 Q ${(xs[4]+xs[2])/2} 200 ${xs[2]} 146" class="wire-lo" marker-end="url(#f-arr)"/>
+              <text x="${(xs[4]+xs[2])/2}" y="190" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="var(--text-muted)">0</text>`;
+      }
+
+      // State circles
+      cfg.states.forEach((st, i) => {
+        const active = st === fsmState;
+        const detected = fsmModel === 'moore' && st === 'S4';
+        s += `<circle cx="${xs[i]}" cy="110" r="34" fill="${active ? (detected ? 'var(--sig-ok)' : 'var(--sig-hi)') : 'var(--bg-subtle)'}" stroke="${active ? 'var(--text-main)' : 'var(--border-soft)'}" stroke-width="${active ? '2.5' : '1.5'}"/>
+              <text x="${xs[i]}" y="${fsmModel==='moore'?106:114}" text-anchor="middle" font-size="15" font-weight="800" fill="${active ? '#fff' : 'var(--text-main)'}">${st}</text>
+              ${fsmModel === 'moore' ? `<text x="${xs[i]}" y="124" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="${active ? '#e2e8f0' : 'var(--text-muted)'}">Z=${cfg.mooreOut[st]}</text>` : ''}`;
+      });
+      document.getElementById('fsm-svg').innerHTML = s;
+    }
+    document.getElementById('fsm-mealy-btn').addEventListener('click', () => { fsmModel = 'mealy'; resetFsm(); });
+    document.getElementById('fsm-moore-btn').addEventListener('click', () => { fsmModel = 'moore'; resetFsm(); });
+    document.getElementById('fsm-feed-0').addEventListener('click', () => feedFsm(0));
+    document.getElementById('fsm-feed-1').addEventListener('click', () => feedFsm(1));
+    document.getElementById('fsm-reset').addEventListener('click', resetFsm);
+    document.getElementById('fsm-demo').addEventListener('click', () => {
+      resetFsm();
+      [1,0,1,1,0,1,1].forEach(b => feedFsm(b));
+    });
+
+    /* ==================== UNIT V: NOISE MARGIN & CMOS GATES ==================== */
+    let nmFam = 'TTL';
+    const NM_SPECS = {
+      TTL: { vdd: '5.0 V', vss: '0.0 V', voh: 2.4, vih: 2.0, vil: 0.8, vol: 0.4, nmh: '0.4 V', nml: '0.4 V', min: 0, max: 5 },
+      CMOS: { vdd: '5.0 V', vss: '0.0 V', voh: 4.95, vih: 3.5, vil: 1.5, vol: 0.05, nmh: '1.45 V', nml: '1.45 V', min: 0, max: 5 },
+      ECL: { vdd: '0.0 V', vss: '-5.2 V', voh: -0.9, vih: -1.1, vil: -1.5, vol: -1.75, nmh: '0.20 V', nml: '0.25 V', min: -2.2, max: 0 },
+    };
+    function renderNm() {
+      document.querySelectorAll('.nm-fam-btn').forEach(b => {
+        b.className = b.dataset.fam === nmFam
+          ? 'nm-fam-btn px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+          : 'nm-fam-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      });
+      const d = NM_SPECS[nmFam];
+      const mapY = v => 230 - ((v - d.min) / (d.max - d.min)) * 190;
+      const yVoh = mapY(d.voh), yVih = mapY(d.vih), yVil = mapY(d.vil), yVol = mapY(d.vol);
+
+      document.getElementById('nm-svg').innerHTML = `
+        <text x="110" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">Output Profile</text>
+        <text x="390" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">Input Profile</text>
+
+        <!-- Output Bar -->
+        <rect x="70" y="40" width="80" height="${Math.max(4, yVoh-40)}" fill="rgba(5,150,105,0.25)" stroke="var(--sig-ok)"/>
+        <rect x="70" y="${yVoh}" width="80" height="${Math.max(4, yVol-yVoh)}" fill="var(--bg-subtle)" stroke="var(--border-soft)"/>
+        <rect x="70" y="${yVol}" width="80" height="${Math.max(4, 230-yVol)}" fill="rgba(37,99,235,0.22)" stroke="var(--sig-hi)"/>
+
+        <!-- Input Bar -->
+        <rect x="350" y="40" width="80" height="${Math.max(4, yVih-40)}" fill="rgba(5,150,105,0.25)" stroke="var(--sig-ok)"/>
+        <rect x="350" y="${yVih}" width="80" height="${Math.max(4, yVil-yVih)}" fill="rgba(217,119,6,0.22)" stroke="var(--sig-warn)"/>
+        <rect x="350" y="${yVil}" width="80" height="${Math.max(4, 230-yVil)}" fill="rgba(37,99,235,0.22)" stroke="var(--sig-hi)"/>
+
+        <!-- Labels -->
+        <text x="62" y="${yVoh+4}" text-anchor="end" font-size="11" font-family="JetBrains Mono" fill="var(--sig-ok)">VOH ${d.voh}V</text>
+        <text x="62" y="${yVol+4}" text-anchor="end" font-size="11" font-family="JetBrains Mono" fill="var(--sig-hi)">VOL ${d.vol}V</text>
+        <text x="438" y="${yVih+4}" font-size="11" font-family="JetBrains Mono" fill="var(--sig-ok)">VIH ${d.vih}V</text>
+        <text x="438" y="${yVil+4}" font-size="11" font-family="JetBrains Mono" fill="var(--sig-hi)">VIL ${d.vil}V</text>
+        <text x="390" y="${(yVih+yVil)/2+4}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--sig-warn)">Forbidden</text>
+
+        <!-- Noise Margin Connectors -->
+        <line x1="150" y1="${yVoh}" x2="350" y2="${yVoh}" class="wire-ctrl"/>
+        <line x1="150" y1="${yVih}" x2="350" y2="${yVih}" class="wire-ctrl"/>
+        <text x="250" y="${(yVoh+yVih)/2 + 4}" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-ok)">NM_H = ${d.nmh}</text>
+
+        <line x1="150" y1="${yVil}" x2="350" y2="${yVil}" class="wire-ctrl"/>
+        <line x1="150" y1="${yVol}" x2="350" y2="${yVol}" class="wire-ctrl"/>
+        <text x="250" y="${(yVil+yVol)/2 + 4}" text-anchor="middle" font-size="12" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-hi)">NM_L = ${d.nml}</text>
+      `;
+      document.getElementById('nm-summary').innerHTML = `
+        <div><strong>${nmFam} Supply:</strong> ${d.vdd} to ${d.vss}</div>
+        <div><strong>High-State Noise Margin (NM_H):</strong> V_OH (${d.voh}V) − V_IH (${d.vih}V) = <span class="text-emerald-600 dark:text-emerald-400 font-bold">${d.nmh}</span></div>
+        <div><strong>Low-State Noise Margin (NM_L):</strong> V_IL (${d.vil}V) − V_OL (${d.vol}V) = <span class="text-blue-600 dark:text-blue-400 font-bold">${d.nml}</span></div>`;
+    }
+    document.querySelectorAll('.nm-fam-btn').forEach(b => b.addEventListener('click', () => { nmFam = b.dataset.fam; renderNm(); }));
+
+    // Unit V Transistor Gate Simulator
+    let u5Gate = 'cmos-inv', u5A = 0, u5B = 1;
+    function renderU5Gate() {
+      document.querySelectorAll('.u5-gate-btn').forEach(b => {
+        b.className = b.dataset.g === u5Gate
+          ? 'u5-gate-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white'
+          : 'u5-gate-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800';
+      });
+      const inWrap = document.getElementById('u5-gate-inputs');
+      if (u5Gate === 'cmos-inv') {
+        inWrap.innerHTML = `<button type="button" id="u5-ta" class="px-3.5 py-1.5 rounded-lg mono text-xs font-bold ${u5A ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">Input A = ${u5A}</button>`;
+        document.getElementById('u5-ta').addEventListener('click', () => { u5A ^= 1; renderU5Gate(); });
+      } else if (u5Gate === 'cmos-nand') {
+        inWrap.innerHTML = `
+          <button type="button" id="u5-ta" class="px-3.5 py-1.5 rounded-lg mono text-xs font-bold ${u5A ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">Input A = ${u5A}</button>
+          <button type="button" id="u5-tb" class="px-3.5 py-1.5 rounded-lg mono text-xs font-bold ${u5B ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">Input B = ${u5B}</button>`;
+        document.getElementById('u5-ta').addEventListener('click', () => { u5A ^= 1; renderU5Gate(); });
+        document.getElementById('u5-tb').addEventListener('click', () => { u5B ^= 1; renderU5Gate(); });
+      } else {
+        inWrap.innerHTML = `
+          <button type="button" id="u5-ta" class="px-3.5 py-1.5 rounded-lg mono text-xs font-bold ${u5A ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">Control C = ${u5A} (C'=${u5A^1})</button>
+          <button type="button" id="u5-tb" class="px-3.5 py-1.5 rounded-lg mono text-xs font-bold ${u5B ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700'}">Signal IN = ${u5B}</button>`;
+        document.getElementById('u5-ta').addEventListener('click', () => { u5A ^= 1; renderU5Gate(); });
+        document.getElementById('u5-tb').addEventListener('click', () => { u5B ^= 1; renderU5Gate(); });
+      }
+
+      const svg = document.getElementById('u5-gate-svg');
+      const st = document.getElementById('u5-gate-status');
+      if (u5Gate === 'cmos-inv') {
+        const pOn = u5A === 0, nOn = u5A === 1, y = u5A ^ 1;
+        svg.innerHTML = `
+          <text x="260" y="24" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-ok)">V_DD (+5V)</text>
+          <line x1="260" y1="32" x2="260" y2="62" class="${pOn ? 'wire-ok' : 'wire-lo'}"/>
+          <rect x="200" y="62" width="120" height="54" rx="14" fill="${pOn ? 'rgba(5,150,105,0.16)' : 'var(--bg-subtle)'}" stroke="${pOn ? 'var(--sig-ok)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="260" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">PMOS (Q₁)</text>
+          <text x="260" y="104" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="${pOn ? 'var(--sig-ok)' : 'var(--text-muted)'}">${pOn ? 'ON (Closed)' : 'OFF (Open)'}</text>
+
+          <line x1="260" y1="116" x2="260" y2="164" class="${pOn ? 'wire-ok' : 'wire-hi'}"/>
+          <line x1="260" y1="140" x2="410" y2="140" class="${y ? 'wire-ok' : 'wire-lo'}"/>
+          <rect x="410" y="120" width="94" height="40" rx="12" fill="${y ? 'var(--sig-ok)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+          <text x="457" y="145" text-anchor="middle" font-size="14" font-family="JetBrains Mono" font-weight="700" fill="${y ? '#fff' : 'var(--text-main)'}">Y = ${y}</text>
+
+          <rect x="200" y="164" width="120" height="54" rx="14" fill="${nOn ? 'rgba(37,99,235,0.16)' : 'var(--bg-subtle)'}" stroke="${nOn ? 'var(--sig-hi)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="260" y="188" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">NMOS (Q₂)</text>
+          <text x="260" y="206" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="${nOn ? 'var(--sig-hi)' : 'var(--text-muted)'}">${nOn ? 'ON (Closed)' : 'OFF (Open)'}</text>
+          <line x1="260" y1="218" x2="260" y2="248" class="${nOn ? 'wire-hi' : 'wire-lo'}"/>
+          <text x="260" y="266" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--text-muted)">GND (0V)</text>
+
+          <line x1="60" y1="140" x2="140" y2="140" class="${u5A ? 'wire-hi' : 'wire-lo'}"/>
+          <path d="M 140 89 L 200 89 M 140 89 L 140 191 L 200 191" class="${u5A ? 'wire-hi' : 'wire-lo'}"/>
+          <text x="34" y="145" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--text-main)">A=${u5A}</text>
+        `;
+        st.innerHTML = `<div><strong>CMOS Inverter (Y = A'):</strong></div>
+          <div>Input A = ${u5A} → PMOS is <strong>${pOn ? 'ON' : 'OFF'}</strong>, NMOS is <strong>${nOn ? 'ON' : 'OFF'}</strong>.</div>
+          <div>Output Y is pulled directly to <strong>${y ? 'V_DD (Logic 1)' : 'GND (Logic 0)'}</strong> with zero static DC current.</div>`;
+      } else if (u5Gate === 'cmos-nand') {
+        const pA = u5A === 0, pB = u5B === 0, nA = u5A === 1, nB = u5B === 1;
+        const y = (u5A & u5B) ^ 1;
+        svg.innerHTML = `
+          <text x="250" y="22" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--sig-ok)">V_DD (Parallel PMOS Pull-Up)</text>
+          <rect x="130" y="38" width="105" height="48" rx="12" fill="${pA ? 'rgba(5,150,105,0.16)' : 'var(--bg-subtle)'}" stroke="${pA ? 'var(--sig-ok)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="182" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-main)">PMOS A</text>
+          <text x="182" y="76" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="${pA ? 'var(--sig-ok)' : 'var(--text-muted)'}">${pA ? 'ON' : 'OFF'}</text>
+
+          <rect x="265" y="38" width="105" height="48" rx="12" fill="${pB ? 'rgba(5,150,105,0.16)' : 'var(--bg-subtle)'}" stroke="${pB ? 'var(--sig-ok)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="317" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-main)">PMOS B</text>
+          <text x="317" y="76" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="${pB ? 'var(--sig-ok)' : 'var(--text-muted)'}">${pB ? 'ON' : 'OFF'}</text>
+
+          <line x1="182" y1="86" x2="182" y2="114" class="${pA ? 'wire-ok' : 'wire-lo'}"/>
+          <line x1="317" y1="86" x2="317" y2="114" class="${pB ? 'wire-ok' : 'wire-lo'}"/>
+          <line x1="182" y1="114" x2="415" y2="114" class="${y ? 'wire-ok' : 'wire-hi'}"/>
+          <rect x="415" y="94" width="96" height="40" rx="12" fill="${y ? 'var(--sig-ok)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+          <text x="463" y="119" text-anchor="middle" font-size="14" font-family="JetBrains Mono" font-weight="700" fill="${y ? '#fff' : 'var(--text-main)'}">Y = ${y}</text>
+
+          <line x1="250" y1="114" x2="250" y2="138" class="${nA && nB ? 'wire-hi' : 'wire-lo'}"/>
+          <rect x="195" y="138" width="110" height="44" rx="12" fill="${nA ? 'rgba(37,99,235,0.16)' : 'var(--bg-subtle)'}" stroke="${nA ? 'var(--sig-hi)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="250" y="164" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-main)">NMOS A (${nA ? 'ON' : 'OFF'})</text>
+          <line x1="250" y1="182" x2="250" y2="196" class="${nA && nB ? 'wire-hi' : 'wire-lo'}"/>
+          <rect x="195" y="196" width="110" height="44" rx="12" fill="${nB ? 'rgba(37,99,235,0.16)' : 'var(--bg-subtle)'}" stroke="${nB ? 'var(--sig-hi)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="250" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-main)">NMOS B (${nB ? 'ON' : 'OFF'})</text>
+          <text x="250" y="264" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="var(--text-muted)">GND (Series NMOS Pull-Down)</text>
+        `;
+        st.innerHTML = `<div><strong>2-Input CMOS NAND (Y = (A·B)'):</strong></div>
+          <div>Pull-up uses <strong>parallel PMOS</strong> (conducts if A=0 OR B=0); pull-down uses <strong>series NMOS</strong> (conducts only if A=1 AND B=1).</div>
+          <div>Current state: A=${u5A}, B=${u5B} → <strong>Y = ${y}</strong>.</div>`;
+      } else {
+        const closed = u5A === 1;
+        const outTxt = closed ? `OUT = ${u5B}` : 'High-Z';
+        svg.innerHTML = `
+          <text x="270" y="34" text-anchor="middle" font-size="13" font-family="JetBrains Mono" fill="var(--text-muted)">Control C' = ${u5A^1} (to PMOS)</text>
+          <line x1="60" y1="140" x2="155" y2="140" class="${u5B ? 'wire-hi' : 'wire-lo'}"/>
+          <text x="26" y="145" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="var(--text-main)">IN=${u5B}</text>
+
+          <rect x="155" y="64" width="230" height="58" rx="14" fill="${closed ? 'rgba(5,150,105,0.16)' : 'var(--bg-subtle)'}" stroke="${closed ? 'var(--sig-ok)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="270" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">PMOS (Passes Strong '1')</text>
+          <text x="270" y="109" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="${closed ? 'var(--sig-ok)' : 'var(--text-muted)'}">${closed ? 'ON' : 'OFF'}</text>
+
+          <rect x="155" y="158" width="230" height="58" rx="14" fill="${closed ? 'rgba(37,99,235,0.16)' : 'var(--bg-subtle)'}" stroke="${closed ? 'var(--sig-hi)' : 'var(--border-soft)'}" stroke-width="2"/>
+          <text x="270" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="var(--text-main)">NMOS (Passes Strong '0')</text>
+          <text x="270" y="203" text-anchor="middle" font-size="12" font-family="JetBrains Mono" fill="${closed ? 'var(--sig-hi)' : 'var(--text-muted)'}">${closed ? 'ON' : 'OFF'}</text>
+
+          <line x1="385" y1="140" x2="430" y2="140" class="${closed ? 'wire-ok' : 'wire-lo'}"/>
+          <rect x="430" y="120" width="96" height="40" rx="12" fill="${closed ? 'var(--sig-ok)' : 'var(--bg-subtle)'}" stroke="var(--border-soft)"/>
+          <text x="478" y="145" text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill="${closed ? '#fff' : 'var(--text-main)'}">${outTxt}</text>
+          <text x="270" y="254" text-anchor="middle" font-size="13" font-family="JetBrains Mono" fill="var(--text-muted)">Control C = ${u5A} (to NMOS)</text>
+        `;
+        st.innerHTML = `<div><strong>CMOS Transmission Gate (Bidirectional Analog/Digital Switch):</strong></div>
+          <div>Parallel PMOS + NMOS eliminate threshold-voltage drop: PMOS passes a full logic 1 without V<sub>th</sub> loss, and NMOS passes a full logic 0.</div>
+          <div>Current state: C=${u5A} → Switch is <strong>${closed ? 'CLOSED (Conducting)' : 'OPEN (High-Impedance High-Z)'}</strong>.</div>`;
+      }
+    }
+    document.querySelectorAll('.u5-gate-btn').forEach(b => b.addEventListener('click', () => { u5Gate = b.dataset.g; renderU5Gate(); }));
+
+    /* ==================== INITIALIZE ALL MODULES ==================== */
+    renderKMap();
+    renderArith();
+    renderMux();
+    render7Seg();
+    renderPenc();
+    renderPld();
+    renderUsr();
+    renderFF();
+    renderCounter();
+    renderFsm();
+    renderNm();
+    renderU5Gate();
+  </script>
+</body>
+</html>
